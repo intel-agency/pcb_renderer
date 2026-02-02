@@ -13,6 +13,32 @@ boards/             # Sample board JSON files
 docs/               # Architecture documentation
 ```
 
+## TL;DR (default agent workflow)
+
+1. Install deps: `uv sync --all-extras`
+2. Make your change.
+3. Run validators (required before finalizing):
+   - `uv run pytest`
+   - `uv run ruff check .`
+   - `uv run basedpyright`
+4. If you changed dependencies:
+   - Update `pyproject.toml`
+   - Regenerate lockfile: `uv lock`
+   - Resync: `uv sync --all-extras`
+
+### Windows/PowerShell notes
+
+- PowerShell doesn't support `&&` the same way as bash; run commands separately or chain with `;`.
+- Prefer `uv run ...` so tools resolve from the project environment.
+
+## Project invariants (please preserve)
+
+- **Everything internal is millimeters.** Only `MICRON` and `MILLIMETER` are accepted at input; parsing normalizes to mm.
+- **Parsing is permissive; validation is authoritative.** Pydantic models ignore unknown fields; semantic checks should live in `validate.py`.
+- **Rendering must stay headless + deterministic.** Keep `matplotlib.use("Agg")` before `pyplot` import and preserve SVG determinism settings.
+- **Export JSON is a public contract.** The LLM plugin and tests consume `_build_export_payload()`.
+- **Plugin is optional and best-effort.** Core CLI should still work without `llm_plugin` installed.
+
 ---
 
 ## Architecture Deep Dive
@@ -37,6 +63,15 @@ Input JSON → parse.py → normalize_units() → Pydantic models → validate.p
 | `stats.py` | Board analytics | `compute_stats()` for export JSON |
 | `cli.py` | Main entry point | `main()`, `_build_export_payload()`, plugin integration |
 
+### Rendering invariants (golden-test sensitive)
+
+- Headless backend: `render.py` must call `matplotlib.use("Agg")` **before** importing `matplotlib.pyplot`.
+- SVG determinism:
+  - `matplotlib.rcParams["svg.hashsalt"] = "pcb-renderer"`
+  - `matplotlib.rcParams["svg.fonttype"] = "none"`
+- Current draw order (high-level): boundary → pours → traces → vias → components → keepouts.
+- Current z-orders (approx): boundary=1, pours=2, traces=3, via outer=4, via hole/component=5, refdes text=6, keepouts=7.
+
 ### Coordinate Systems
 
 - **ECAD**: Y-up (0,0 at bottom-left, Y increases upward)
@@ -50,6 +85,15 @@ Only two units supported:
 - `MILLIMETER` → multiply by 1.0 (no change)
 
 The parser normalizes everything to millimeters internally.
+
+### Input JSON expectations (what the parser accepts)
+
+The parser is intentionally permissive; most semantic checks happen in `validate.py`.
+
+- Units: only `MICRON` and `MILLIMETER` (normalized to mm).
+- Coordinates: accepts either flat arrays (`[x1, y1, x2, y2, ...]`) or nested pairs (`[[x1, y1], [x2, y2], ...]`).
+- Unknown fields: ignored by models (`model_config = {"extra": "ignore"}`) so schema drift doesn't hard-fail parsing.
+- Reserved keywords: `Net.class` is mapped to `net_class` via Pydantic aliasing.
 
 ---
 
@@ -106,6 +150,15 @@ class ValidationError:
 - `pin` - For pin errors
 - `indices` - For stackup errors
 
+### Adding/adjusting validation rules
+
+When you add a new validation rule:
+
+1. Add/extend an `ErrorCode` in `pcb_renderer/errors.py` if needed.
+2. Implement the rule in `pcb_renderer/validate.py` (prefer returning `ValidationError` rather than raising).
+3. Include a stable `json_path` and a small `context` payload (IDs, referenced names, available choices).
+4. Add/adjust tests in `tests/test_validate.py` (and `tests/test_boards.py` if it needs a full fixture).
+
 ---
 
 ## Plugin System
@@ -129,6 +182,20 @@ class ValidationError:
 - `OPENAI_MODEL` - Default: `gpt-4o-mini`
 
 **Note on prefixed variables:** Use `PCB_RENDERER_LLM_API_KEY` and `PCB_RENDERER_LLM_BASE_URL` to avoid environment variable collisions with other tools that use OpenAI APIs.
+
+**HTTP backend precedence:**
+
+- API key: `OPENAI_API_KEY` → `PCB_RENDERER_LLM_API_KEY`
+- Base URL: `OPENAI_BASE_URL` → `LLM_API_BASE` → `PCB_RENDERER_LLM_BASE_URL`
+
+If the HTTP backend is selected but no API key is set, the plugin returns a readable error string (it does not raise).
+
+### Plugin CLI invocation
+
+This repo does **not** install a dedicated `llm_plugin` console script. Use module execution:
+
+- `uv run python -m llm_plugin --help`
+- `uv run python -m llm_plugin explain <export.json>`
 
 ### Export JSON Schema
 
@@ -205,6 +272,13 @@ uv run ruff check .
 uv run basedpyright
 ```
 
+### Dependency management (uv)
+
+- If `pyproject.toml` changes, regenerate `uv.lock` with `uv lock`.
+- CI uses `uv sync --all-extras` (so dev + llm extras must resolve together).
+- Avoid adding new dependencies unless necessary; prefer stdlib + existing deps.
+- Keep `uv.lock` in sync with `pyproject.toml`.
+
 ### CLI Usage Patterns
 
 ```bash
@@ -225,9 +299,9 @@ uv run pcb-render boards/board.json -o out/board.svg --llm-explain
 uv run pcb-render boards/board.json -o out/board.svg --llm-suggest-fixes --llm-analyze
 
 # Standalone LLM plugin
-uv run llm_plugin explain export.json
-uv run llm_plugin suggest-fixes export.json
-uv run llm_plugin analyze export.json
+uv run python -m llm_plugin explain export.json
+uv run python -m llm_plugin suggest-fixes export.json
+uv run python -m llm_plugin analyze export.json
 ```
 
 ---
@@ -259,6 +333,12 @@ matplotlib.rcParams["svg.fonttype"] = "none"
 
 Golden files are stored in `tests/golden/` and compared using normalized SVG strings.
 
+If you intentionally change rendering output:
+
+- Update the deterministic settings (keep `svg.hashsalt` stable).
+- Regenerate the golden SVG(s) in a deliberate, reviewed step.
+- Update `tests/test_golden_render.py` expectations if needed.
+
 ---
 
 ## Common Patterns & Gotchas
@@ -273,6 +353,24 @@ import matplotlib.pyplot as plt
 ```
 
 This prevents Tkinter issues in CI/docker environments.
+
+### Plugin flags not recognized
+
+The core CLI only registers `--llm-*` flags if `import llm_plugin` succeeds at runtime.
+
+- Fix: install extras (`uv sync --extra llm`) or ensure the package is importable in the active env.
+
+### Secrets hygiene
+
+- Never hardcode or print API keys.
+- Do not commit local exports/render outputs (e.g., `out/`, `coverage.xml`, `.coverage`) unless explicitly required.
+
+### Export JSON is a contract
+
+`_build_export_payload()` is consumed by the LLM plugin and tests.
+
+- Prefer additive changes.
+- If you must make a breaking change, bump `schema_version` and update `tests/test_export_json.py`.
 
 ### Pydantic Model Configuration
 
