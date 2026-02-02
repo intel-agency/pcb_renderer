@@ -5,7 +5,7 @@
 - Purpose: natural-language explanations, fix suggestions, and design analysis using the board export JSON.
 - Install: `uv sync --extra llm`
 - Flags (core CLI): `--llm-explain`, `--llm-suggest-fixes`, `--llm-analyze`
-- Backend selection: set `LLM_BACKEND` to `template` (default, deterministic), `local` (stub), or `http`/`openai` for OpenAI-compatible APIs. Use `OPENAI_API_KEY` and optionally `OPENAI_BASE_URL`/`LLM_API_BASE`.
+- Backend selection: set `LLM_BACKEND` to `template` (default, deterministic), `local` (stub), or `http`/`openai` for OpenAI-compatible APIs. Use `OPENAI_API_KEY` (or `PCB_RENDERER_LLM_API_KEY` to avoid collisions) and optionally `OPENAI_BASE_URL`/`LLM_API_BASE` (or `PCB_RENDERER_LLM_BASE_URL`).
 - Export handling: core CLI writes JSON via `--export-json`; if LLM flags are used without it, a temp export is generated automatically.
 - Invocation: the core CLI dynamically registers the plugin if installed (`pip/uv` editable install in this repo). You can also run the plugin directly via `uv run llm_plugin --help`.
 

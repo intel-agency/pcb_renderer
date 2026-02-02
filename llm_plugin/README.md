@@ -25,8 +25,8 @@ uv run llm_plugin analyze out/alpha.json
 - `LLM_BACKEND=template` (default): deterministic template response, ideal for tests.
 - `LLM_BACKEND=local`: placeholder stub for future on-device models.
 - `LLM_BACKEND=http` or `openai`: uses OpenAI-compatible chat completions.
-  - Set `OPENAI_API_KEY`.
-  - Optional: `OPENAI_BASE_URL` or `LLM_API_BASE` and `OPENAI_MODEL` (default `gpt-4o-mini`).
+  - Set `OPENAI_API_KEY` (or `PCB_RENDERER_LLM_API_KEY` to avoid collisions with other tools).
+  - Optional: `OPENAI_BASE_URL` or `LLM_API_BASE` (or `PCB_RENDERER_LLM_BASE_URL` as fallback) and `OPENAI_MODEL` (default `gpt-4o-mini`).
 
 ## What the plugin consumes
 

@@ -26,15 +26,15 @@ def _local_stub(prompt: str) -> str:
 
 
 def _http_client(prompt: str) -> str:
-    api_key = os.getenv("OPENAI_API_KEY")
-    base_url = os.getenv("OPENAI_BASE_URL") or os.getenv("LLM_API_BASE")
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("PCB_RENDERER_LLM_API_KEY")
+    base_url = os.getenv("OPENAI_BASE_URL") or os.getenv("LLM_API_BASE") or os.getenv("PCB_RENDERER_LLM_BASE_URL")
     try:
         from openai import OpenAI
     except ImportError:  # pragma: no cover
         return "[ERROR] openai package not installed; falling back to template"
 
     if not api_key:
-        return "[ERROR] OPENAI_API_KEY not set; cannot call HTTP backend"
+        return "[ERROR] OPENAI_API_KEY (or PCB_RENDERER_LLM_API_KEY) not set; cannot call HTTP backend"
 
     client = OpenAI(api_key=api_key, base_url=base_url)
     try:
