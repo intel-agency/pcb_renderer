@@ -425,14 +425,14 @@ Manual visual verification of rendered outputs is acceptable.
 
 ### GitHub Actions Workflow
 - Matrix: Windows, macOS, Linux Ã— Python 3.11, 3.12
-- Steps: checkout, setup Python, `uv sync`, `pytest`, `ruff`, `pyright`
+- Steps: checkout, setup Python, `uv sync`, `pytest`, `ruff`, `basedpyright`
 - Coverage: `pytest-cov` with 80% minimum
 
 ### Local Development
 - `uv sync` to install deps
 - `pytest` to run tests
 - `ruff check` for linting
-- `pyright` for type checking
+- `basedpyright` for type checking
 
 ### Acceptance Criteria
 **GitHub Actions Workflow:**
@@ -449,14 +449,14 @@ Manual visual verification of rendered outputs is acceptable.
 - [ ] Run `uv sync` to install dependencies
 - [ ] Run `pytest` with coverage (`pytest --cov --cov-report=xml`)
 - [ ] Run `ruff check` (exits 1 on lint errors)
-- [ ] Run `pyright` (exits 1 on type errors)
+- [ ] Run `basedpyright` (exits 1 on type errors)
 - [ ] Upload coverage report to GitHub (actions/upload-artifact@v4)
 
 **Pass Criteria:**
 - [ ] All test runs pass on all OS/Python combinations (6 total)
 - [ ] Coverage meets 80% minimum threshold (fails if below)
 - [ ] No lint errors from ruff
-- [ ] No type errors from pyright
+- [ ] No type errors from basedpyright
 - [ ] Workflow completes in <5 minutes per matrix job
 
 **Coverage Reporting:**
@@ -466,13 +466,13 @@ Manual visual verification of rendered outputs is acceptable.
 
 **Local Development Tools:**
 - [ ] `pyproject.toml` has ruff configuration
-- [ ] `pyproject.toml` has pyright configuration
+- [ ] `pyproject.toml` has basedpyright configuration
 - [ ] `pytest.ini` or `pyproject.toml` has pytest settings
 - [ ] `uv.lock` is committed (reproducible builds)
 
 **Developer Experience:**
 - [ ] New contributor can clone, `uv sync`, `pytest` without errors
-- [ ] Pre-commit hooks (optional) can run ruff and pyright locally
+- [ ] Pre-commit hooks (optional) can run ruff and basedpyright locally
 - [ ] README has "Development" section with setup instructions
 - [ ] CI failures have actionable error messages (not just "failed")
 
@@ -630,7 +630,7 @@ Manual visual verification of rendered outputs is acceptable.
 ✓ GitHub Actions workflow file exists and is valid
 ✓ All matrix jobs (6 combinations) pass
 ✓ Coverage is uploaded as artifact
-✓ Ruff and pyright checks pass
+✓ Ruff and basedpyright checks pass
 ✓ Workflow completes in <5 minutes per job
 ✓ Local dev setup instructions in README work
 
@@ -655,7 +655,7 @@ The project is complete when **all** of the following are true:
 **Quality:**
 - [ ] Test suite has â‰¥80% coverage and all tests pass
 - [ ] Code passes ruff linting with zero errors
-- [ ] Code passes pyright type checking with zero errors
+- [ ] Code passes basedpyright type checking with zero errors
 - [ ] No warnings in test output
 
 **Portability:**

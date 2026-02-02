@@ -46,7 +46,7 @@ This is a **development walkthrough you can follow from an empty repo to a finis
 1. Create `pyproject.toml` with:
    - Python `>=3.11`
    - runtime deps: `pydantic`, `numpy`, `matplotlib`
-   - dev deps: `pytest`, `pytest-cov`, `ruff`, `pyright`
+   - dev deps: `pytest`, `pytest-cov`, `ruff`, `basedpyright`
 
 2. Create lockfile:
 ```bash
@@ -557,7 +557,7 @@ Testing expectations:
 
 Plan requirement:
 - matrix: Windows/macOS/Linux × Python 3.11/3.12
-- run: `uv sync`, `pytest`, `ruff`, `pyright`
+- run: `uv sync`, `pytest`, `ruff`, `basedpyright`
 - job time <5 minutes【67:1†development_plan_v2.md†L59-L63】【71:4†development_plan_v2.md†L25-L31】.
 
 ---
@@ -569,7 +569,7 @@ Plan requirement:
 - install uv
 - `uv sync --frozen`
 - `ruff check .`
-- `pyright`
+- `basedpyright`
 - `pytest --cov ...` enforce ≥80%
 
 **Results:**
@@ -586,7 +586,7 @@ Plan’s “Definition of Done” includes:
 - all 14 invalid boards detected
 - all valid boards render to SVG/PNG/PDF
 - keepouts hatched, refdes readable
-- ruff + pyright clean
+- ruff + basedpyright clean
 - README includes installation/usage/error codes/testing
 - code reviewable in ~20 minutes【71:4†development_plan_v2.md†L45-L79】.
 
@@ -658,7 +658,7 @@ pytest
 2. **Lint + typecheck:**
 ```bash
 ruff check .
-pyright
+basedpyright
 ```
 3. **Render a known-valid board to each format:**
 ```bash

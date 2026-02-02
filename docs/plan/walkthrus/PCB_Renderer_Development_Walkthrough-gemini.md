@@ -39,7 +39,7 @@ dev \= \[
     "pytest\>=7.4",  
     "pytest-cov\>=4.1",  
     "ruff\>=0.1",  
-    "pyright\>=1.1",  
+    "basedpyright\>=1.37.3",  
 \]  
 llm \= \[  
     "typer\>=0.9.0",  

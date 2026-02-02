@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any, Dict, Optional
 from enum import Enum
 
 
@@ -41,6 +42,8 @@ class ValidationError:
     severity: Severity
     message: str
     json_path: str
+    context: Optional[Dict[str, Any]] = None
 
     def __str__(self) -> str:  # pragma: no cover
-        return f"[{self.severity}] {self.code}: {self.message} at {self.json_path}"
+        ctx = f" context={self.context}" if self.context else ""
+        return f"[{self.severity}] {self.code}: {self.message} at {self.json_path}{ctx}"

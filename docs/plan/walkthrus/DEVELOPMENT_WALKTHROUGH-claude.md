@@ -58,7 +58,7 @@ dev = [
     "pytest>=7.4",
     "pytest-cov>=4.1",
     "ruff>=0.1",
-    "pyright>=1.1",
+    "basedpyright>=1.37.3",
 ]
 
 [build-system]
@@ -69,7 +69,7 @@ build-backend = "hatchling.build"
 line-length = 100
 target-version = "py311"
 
-[tool.pyright]
+[tool.basedpyright]
 pythonVersion = "3.11"
 typeCheckingMode = "strict"
 

@@ -9,6 +9,16 @@ from .geometry import Point, Polygon
 from .models import Board
 
 
+CHECKS_RUN = [
+    "boundary",
+    "references",
+    "geometry",
+    "stackup",
+    "rotation",
+    "pins",
+]
+
+
 def validate_board(board: Board) -> List[ValidationError]:
     errors: List[ValidationError] = []
 
@@ -33,6 +43,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                     severity=Severity.ERROR,
                     message=f"Trace {trace_id} must contain at least 2 points",
                     json_path=f"$.traces.{trace_id}.path.coordinates",
+                    context={"trace_id": trace_id, "point_count": len(trace.path.points) if trace.path else 0},
                 )
             )
         if trace.net_name not in net_names:
@@ -42,6 +53,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                     severity=Severity.ERROR,
                     message=f"Trace {trace_id} references unknown net {trace.net_name}",
                     json_path=f"$.traces.{trace_id}.net_name",
+                    context={"trace_id": trace_id, "referenced_net": trace.net_name, "available_nets": sorted(net_names)},
                 )
             )
         if trace.layer_hash not in layer_names:
@@ -51,6 +63,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                     severity=Severity.ERROR,
                     message=f"Trace {trace_id} references unknown layer {trace.layer_hash}",
                     json_path=f"$.traces.{trace_id}.layer_hash",
+                    context={"trace_id": trace_id, "referenced_layer": trace.layer_hash, "available_layers": sorted(layer_names)},
                 )
             )
         if trace.width <= 0:
@@ -60,6 +73,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                     severity=Severity.ERROR,
                     message=f"Trace {trace_id} width must be positive",
                     json_path=f"$.traces.{trace_id}.width",
+                    context={"trace_id": trace_id, "width": trace.width},
                 )
             )
 
@@ -71,6 +85,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                     severity=Severity.ERROR,
                     message=f"Via {via_id} references unknown net {via.net_name}",
                     json_path=f"$.vias.{via_id}.net_name",
+                    context={"via_id": via_id, "referenced_net": via.net_name, "available_nets": sorted(net_names)},
                 )
             )
         if via.hole_size >= via.diameter:
@@ -80,6 +95,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                     severity=Severity.ERROR,
                     message=f"Via {via_id} hole_size must be smaller than diameter",
                     json_path=f"$.vias.{via_id}.hole_size",
+                    context={"via_id": via_id, "hole_size": via.hole_size, "diameter": via.diameter},
                 )
             )
         start = via.span.get("start_layer")
@@ -91,6 +107,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                     severity=Severity.ERROR,
                     message=f"Via {via_id} references unknown layer",
                     json_path=f"$.vias.{via_id}.span",
+                    context={"via_id": via_id, "start_layer": start, "end_layer": end, "available_layers": sorted(layer_names)},
                 )
             )
 
@@ -123,6 +140,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                         severity=Severity.ERROR,
                         message=f"Component {comp_name} lies outside boundary",
                         json_path=f"$.components.{comp_name}.transform.position",
+                        context={"component": comp_name, "position": [comp.transform.position.x, comp.transform.position.y]},
                     )
                 )
             if not 0 <= comp.transform.rotation <= 360:
@@ -132,6 +150,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                         severity=Severity.ERROR,
                         message=f"Component {comp_name} rotation must be 0-360",
                         json_path=f"$.components.{comp_name}.transform.rotation",
+                        context={"component": comp_name, "rotation": comp.transform.rotation},
                     )
                 )
             for pin_name, pin in comp.pins.items():
@@ -142,6 +161,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                             severity=Severity.ERROR,
                             message=f"Pin {pin_name} references {pin.comp_name} not {comp.name}",
                             json_path=f"$.components.{comp_name}.pins.{pin_name}.comp_name",
+                            context={"component": comp_name, "pin": pin_name, "comp_name": pin.comp_name},
                         )
                     )
                 if pin.net_name not in net_names:
@@ -151,6 +171,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                             severity=Severity.ERROR,
                             message=f"Pin {pin_name} references unknown net {pin.net_name}",
                             json_path=f"$.components.{comp_name}.pins.{pin_name}.net_name",
+                            context={"component": comp_name, "pin": pin_name, "referenced_net": pin.net_name, "available_nets": sorted(net_names)},
                         )
                     )
 
@@ -172,6 +193,7 @@ def validate_board(board: Board) -> List[ValidationError]:
                     severity=Severity.ERROR,
                     message="Stackup layer indices are not contiguous",
                     json_path="$.stackup.layers",
+                    context={"indices": indices},
                 )
             )
 
