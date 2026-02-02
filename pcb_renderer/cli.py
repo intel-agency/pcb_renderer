@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -22,6 +25,7 @@ def create_parser() -> argparse.ArgumentParser:
     parser.add_argument("--quiet", action="store_true", help="Suppress success output")
     parser.add_argument("--permissive", action="store_true", help="Render even if validation errors occur")
     parser.add_argument("--export-json", dest="export_json", type=Path, help="Write normalized board + errors to JSON")
+    parser.add_argument("--open", dest="auto_open", action="store_true", help="Open output with system default app")
     return parser
 
 
@@ -71,6 +75,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.export_json:
         _maybe_export(args.export_json, board, all_errors)
 
+    if args.auto_open:
+        try:
+            open_file(args.output)
+        except Exception as exc:  # pragma: no cover
+            if verbose:
+                print(f"Warning: could not open output: {exc}", file=sys.stderr)
+
     if not args.quiet:
         print(f"Success: Board rendered to {args.output}")
     return 0
@@ -85,6 +96,23 @@ def _maybe_export(path: Path | None, board, errors) -> None:
     }
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2))
+
+
+def open_file(path: Path) -> None:
+    """Open a file with the OS default application (best-effort, cross-platform)."""
+
+    if sys.platform.startswith("win"):
+        os.startfile(path)  # type: ignore[attr-defined]
+        return
+    if sys.platform == "darwin":
+        subprocess.run(["open", str(path)], check=False)
+        return
+
+    opener = shutil.which("xdg-open") or shutil.which("gio")
+    if opener:
+        subprocess.run([opener, str(path)], check=False)
+        return
+    raise RuntimeError("No system opener available (xdg-open/gio not found)")
 
 
 if __name__ == "__main__":  # pragma: no cover
