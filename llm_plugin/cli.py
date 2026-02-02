@@ -46,7 +46,10 @@ def suggest_fixes(json_file: Path) -> None:
 
     data = _load_json(json_file)
     errors = data.get("validation_result", {}).get("errors", [])
-    board = data.get("parse_result", {}).get("board", {})
+    board = data.get("parse_result", {}).get("board")
+    if board is None:
+        _emit("No parsed board available; cannot suggest fixes.")
+        return
     backend = _ensure_backend()
     client = get_client(backend)
     filtered = filter_context(board, errors)
