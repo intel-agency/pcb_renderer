@@ -5,7 +5,8 @@
 PCB Renderer is a CLI tool that parses ECAD JSON board files, validates them against 18 error rules, and renders them to SVG/PNG/PDF using Matplotlib. It includes an optional LLM plugin for natural-language error explanations and design analysis.
 
 **Repository Structure:**
-```
+
+``` sh
 pcb_renderer/       # Core package
 llm_plugin/         # Optional LLM plugin (Typer CLI)
 tests/              # Test suite with fixtures and golden masters
@@ -31,6 +32,33 @@ docs/               # Architecture documentation
 - PowerShell doesn't support `&&` the same way as bash; run commands separately or chain with `;`.
 - Prefer `uv run ...` so tools resolve from the project environment.
 
+## Agent cognition: Sequential Thinking + Memory tools (MCP)
+
+Unless the request is **extremely trivial** (one-line answer or one-line edit), use both tools.
+
+### Sequential Thinking (plan → revise → verify)
+
+- Break the work into numbered, testable steps; keep each step small and scoped.
+- Start with an estimated step count, adjust as you learn more.
+- Revise earlier steps when new info appears; branch alternatives when uncertain.
+- Form a hypothesis, then verify it (file reads/tests) before finalizing.
+- Use it for: debugging, multi-file changes, feature work, test planning, CI failures.
+- If you get stuck, reopen the sequence and reassess assumptions.
+
+Excerpt: the tool supports “dynamic and reflective problem-solving,” “breaking down complex problems into manageable steps,” and “revision and refinement.”
+Source: <https://mcprepository.com/modelcontextprotocol/sequentialthinking>
+
+### Memory tools (retrieve + store durable knowledge)
+
+- **Retrieve**: search at task start and decision points (contracts/flags/schema/determinism, recurring CI issues, user references to prior decisions).
+- **Store**: after non-trivial work, persist stable facts (contracts, invariants, conventions, incident fixes).
+- **Search cues**: query by feature or file (e.g., "export json", "render determinism", "pcb_renderer/cli.py").
+- **Format**: short entry with rule + why + file/module; avoid logs/large blobs.
+- **Safety**: never store secrets; use structured namespaces for easier search.
+
+Excerpt: organize memories with structured namespaces (e.g., per-user/per-project) so they’re searchable and reusable.
+Source: <https://langchain-ai.github.io/langmem/guides/memory_tools/>
+
 ## Project invariants (please preserve)
 
 - **Everything internal is millimeters.** Only `MICRON` and `MILLIMETER` are accepted at input; parsing normalizes to mm.
@@ -52,7 +80,7 @@ Input JSON → parse.py → normalize_units() → Pydantic models → validate.p
 **Key Modules:**
 
 | Module | Purpose | Key Functions/Classes |
-|--------|---------|----------------------|
+| -------- | --------- | ---------------------- |
 | `parse.py` | JSON loading, unit normalization | `load_board()`, `normalize_units()`, `parse_coordinates()` |
 | `models.py` | Pydantic data models | `Board`, `Component`, `Trace`, `Via`, `Keepout`, `Net`, `Layer` |
 | `validate.py` | 14 validation rules | `validate_board()`, `CHECKS_RUN` constant |
@@ -81,6 +109,7 @@ Input JSON → parse.py → normalize_units() → Pydantic models → validate.p
 ### Unit Handling
 
 Only two units supported:
+
 - `MICRON` → multiply by 0.001 to get mm
 - `MILLIMETER` → multiply by 1.0 (no change)
 
@@ -102,6 +131,7 @@ The parser is intentionally permissive; most semantic checks happen in `validate
 ### ErrorCode Enum (18 codes)
 
 **Boundary/Geometry:**
+
 - `MISSING_BOUNDARY` - Board has no boundary polygon
 - `SELF_INTERSECTING_BOUNDARY` - Boundary polygon crosses itself
 - `MALFORMED_COORDINATES` - Invalid coordinate format
@@ -112,17 +142,20 @@ The parser is intentionally permissive; most semantic checks happen in `validate
 - `NEGATIVE_WIDTH` - Trace width <= 0
 
 **References:**
+
 - `DANGLING_TRACE` - Trace references non-existent net
 - `NONEXISTENT_NET` - Pin references unknown net
 - `NONEXISTENT_LAYER` - Trace/via references unknown layer
 - `INVALID_PIN_REFERENCE` - Pin's comp_name doesn't match its component
 
 **Structure:**
+
 - `EMPTY_BOARD` - No components, traces, or vias
 - `MALFORMED_STACKUP` - Layer index gaps or duplicates
 - `INVALID_UNIT_SPECIFICATION` - Unit not MICRON/MILLIMETER
 
 **Parse Errors:**
+
 - `MALFORMED_JSON` - Invalid JSON syntax
 - `FILE_IO_ERROR` - File read failure
 - `PARSE_ERROR` - General parse failure
@@ -140,6 +173,7 @@ class ValidationError:
 ```
 
 **Context Fields Used:**
+
 - `trace_id`, `point_count` - For trace errors
 - `referenced_net`, `available_nets` - For net reference errors
 - `referenced_layer`, `available_layers` - For layer errors
@@ -166,16 +200,19 @@ When you add a new validation rule:
 ### LLM Plugin Architecture
 
 **Registration Flow:**
+
 1. Core CLI imports `llm_plugin` dynamically via `_maybe_register_plugin()`
 2. If present, calls `llm_plugin.register_cli(parser)` to add `--llm-*` flags
 3. On execution, `_invoke_llm_plugin()` calls `llm_plugin.run_from_core(export_path, modes)`
 
 **Backend Selection (via `LLM_BACKEND` env var):**
+
 - `template` (default) - Returns formatted prompt for testing
 - `local` - Placeholder stub for on-device models
 - `http`/`openai` - OpenAI-compatible API (requires `OPENAI_API_KEY`)
 
 **Environment Variables:**
+
 - `LLM_BACKEND` - Backend selector
 - `OPENAI_API_KEY` - Required for HTTP backend (fallback: `PCB_RENDERER_LLM_API_KEY`)
 - `OPENAI_BASE_URL`/`LLM_API_BASE` - Optional API endpoint override (fallback: `PCB_RENDERER_LLM_BASE_URL`)
@@ -311,7 +348,7 @@ uv run python -m llm_plugin analyze export.json
 ### Test Organization
 
 | Test File | Coverage |
-|-----------|----------|
+| ----------- | ---------- |
 | `test_models.py` | Pydantic models, Point NaN rejection, rotation bounds |
 | `test_parse.py` | Coordinate parsing, unit normalization, invalid units |
 | `test_validate.py` | All validation rules, specific board fixtures |
@@ -326,6 +363,7 @@ uv run python -m llm_plugin analyze export.json
 ### Golden Master Tests
 
 Rendering tests use deterministic SVG output by setting:
+
 ```python
 matplotlib.rcParams["svg.hashsalt"] = "pcb-renderer"
 matplotlib.rcParams["svg.fonttype"] = "none"
@@ -346,6 +384,7 @@ If you intentionally change rendering output:
 ### Headless Rendering
 
 Matplotlib is forced to use `Agg` backend in `render.py`:
+
 ```python
 import matplotlib
 matplotlib.use("Agg")  # Must be before pyplot import
@@ -375,6 +414,7 @@ The core CLI only registers `--llm-*` flags if `import llm_plugin` succeeds at r
 ### Pydantic Model Configuration
 
 All models use:
+
 ```python
 model_config = {"extra": "ignore", "populate_by_name": True}
 ```
@@ -385,6 +425,7 @@ model_config = {"extra": "ignore", "populate_by_name": True}
 ### Boolean Type Check in Scaling
 
 In `normalize_units()`, there's a guard against bool→float conversion:
+
 ```python
 if isinstance(value, bool):
     return value
@@ -409,10 +450,12 @@ This prevents `True` from becoming `1.0`.
 ## CI/CD Pipeline
 
 GitHub Actions (`.github/workflows/ci.yml`):
+
 - Matrix: Windows, macOS, Linux × Python 3.11, 3.12
 - Steps: checkout → setup uv → sync --all-extras → pytest → ruff → basedpyright
 
 Docker support:
+
 - `Dockerfile` based on `python:3.11-slim` with freetype
 - Headless-safe (uses Agg backend)
 
@@ -421,7 +464,7 @@ Docker support:
 ## File Reference Quick Guide
 
 | When you need to... | Look in... |
-|---------------------|------------|
+| --------------------- | ------------ |
 | Add new error code | `errors.py` → add to `ErrorCode`, use in `validate.py` |
 | Add validation rule | `validate.py` → append to `validate_board()`, update `CHECKS_RUN` |
 | Add board field | `models.py` → add to `Board`, handle in `parse.py` if needed |
