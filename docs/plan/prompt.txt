@@ -1,0 +1,2 @@
+create a  plan to implment the app described in the docs: @docs\plan\development_plan_v2.md @docs\plan\implementation_guide_v2.md @docs\plan\architecture_guide_v2.md
+ @docs\input\Quilter Backend Engineer Code Challenge 1-27.pdf @docs\plan\Application Implementation Specification_ PCB Renderer.md 
