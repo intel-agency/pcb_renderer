@@ -83,7 +83,7 @@ Input JSON → parse.py → normalize_units() → Pydantic models → validate.p
 | -------- | --------- | ---------------------- |
 | `parse.py` | JSON loading, unit normalization | `load_board()`, `normalize_units()`, `parse_coordinates()` |
 | `models.py` | Pydantic data models | `Board`, `Component`, `Trace`, `Via`, `Keepout`, `Net`, `Layer` |
-| `validate.py` | 14 validation rules | `validate_board()`, `CHECKS_RUN` constant |
+| `validate.py` | 18 validation rules | `validate_board()`, `CHECKS_RUN` constant |
 | `transform.py` | Coordinate transforms | `ecad_to_svg()`, `compute_component_transform()` |
 | `render.py` | Matplotlib rendering | `render_board()`, deterministic z-order drawing |
 | `errors.py` | Structured errors | `ErrorCode` enum, `ValidationError` dataclass |

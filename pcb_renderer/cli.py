@@ -170,7 +170,8 @@ def _build_export_payload(
         }
 
     parse_success = not parse_errors and board is not None
-    validation_success = not validation_errors
+    validation_success = parse_success and not validation_errors
+    checks_run = CHECKS_RUN if parse_success else []
 
     return {
         "schema_version": "1.0",
@@ -187,7 +188,7 @@ def _build_export_payload(
             "warning_count": 0,
             "errors": [_error_to_dict(e) for e in validation_errors],
             "warnings": [],
-            "checks_run": CHECKS_RUN,
+            "checks_run": checks_run,
         },
         "render_result": {
             "success": render_success,
@@ -203,7 +204,7 @@ def _maybe_register_plugin(parser: argparse.ArgumentParser) -> None:
 
         if hasattr(llm_plugin, "register_cli"):
             llm_plugin.register_cli(parser)
-    except Exception:
+    except ImportError:
         return
 
 
@@ -237,7 +238,10 @@ def _invoke_llm_plugin(export_path: Optional[Path], modes: List[str], verbose: b
             print("LLM plugin not installed; skipping LLM invocation", file=sys.stderr)
     except Exception as exc:  # pragma: no cover
         if verbose:
+            import traceback
+
             print(f"LLM plugin invocation failed: {exc}", file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
 
 
 if __name__ == "__main__":  # pragma: no cover

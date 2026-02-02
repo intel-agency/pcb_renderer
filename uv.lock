@@ -750,15 +750,14 @@ name = "pcb-renderer"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "basedpyright" },
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "pydantic" },
-    { name = "typer" },
 ]
 
 [package.optional-dependencies]
 dev = [
+    { name = "basedpyright" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
@@ -771,7 +770,7 @@ llm = [
 
 [package.metadata]
 requires-dist = [
-    { name = "basedpyright", specifier = ">=1.37.3" },
+    { name = "basedpyright", marker = "extra == 'dev'", specifier = ">=1.37.3" },
     { name = "matplotlib", specifier = ">=3.7" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "openai", marker = "extra == 'llm'", specifier = ">=1.0.0" },
@@ -780,7 +779,6 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.4" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.1" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1" },
-    { name = "typer", specifier = ">=0.9" },
     { name = "typer", marker = "extra == 'llm'", specifier = ">=0.9" },
 ]
 provides-extras = ["dev", "llm"]
