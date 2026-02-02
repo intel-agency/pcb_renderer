@@ -5,7 +5,7 @@ Build the core PCB renderer (parse/validate/transform/render/CLI/tests) plus CI/
 
 ## Implementation Steps
 1. **Repo audit & layout alignment**
-   - Verify/establish `pcb_renderer/` package, `tests/`, and dependency/tooling in `pyproject.toml` (pydantic, numpy, matplotlib, pytest, ruff, pyright, uv).
+   - Verify/establish `pcb_renderer/` package, `tests/`, and dependency/tooling in `pyproject.toml` (pydantic, numpy, matplotlib, pytest, ruff, basedpyright, uv).
    - Ensure board fixtures are in `boards/` and used by tests.
 
 2. **Geometry + Models (Phase 1)**
@@ -40,7 +40,7 @@ Build the core PCB renderer (parse/validate/transform/render/CLI/tests) plus CI/
    - Add coverage target (~80%) in pytest config.
 
 9. **CI/CD + Docker (Phase 7)**
-   - Add GitHub Actions matrix (Win/macOS/Linux × Py3.11/3.12) with `uv sync`, `pytest --cov`, `ruff`, `pyright`.
+   - Add GitHub Actions matrix (Win/macOS/Linux × Py3.11/3.12) with `uv sync`, `pytest --cov`, `ruff`, `basedpyright`.
    - Add Dockerfile per spec (python:3.11‑slim + freetype) and entrypoint to `pcb-render`.
 
 10. **Docs (Phase 8)**
@@ -51,7 +51,7 @@ Build the core PCB renderer (parse/validate/transform/render/CLI/tests) plus CI/
 - `uv sync`
 - `pytest --cov`
 - `ruff check`
-- `pyright`
+- `basedpyright`
 
 ## Assumptions (confirm before coding)
 - Unit support is **MICRON + MILLIMETER only**; MILS/INCH will be treated as invalid units.

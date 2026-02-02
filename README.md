@@ -8,6 +8,12 @@ CLI tool to parse, validate, and render ECAD JSON boards to SVG/PNG/PDF with str
 uv sync
 ```
 
+## Development
+
+```bash
+uv sync --extra dev
+```
+
 ## Usage
 
 ```bash
@@ -33,7 +39,7 @@ uv run pcb-render boards/board_alpha.json -o out/alpha.svg --llm-explain --expor
 ```bash
 uv run pytest --cov
 uv run ruff check .
-uv run pyright
+uv run basedpyright
 ```
 
 ## Future Work

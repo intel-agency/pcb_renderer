@@ -23,7 +23,7 @@ def test_via_hole_smaller_than_diameter():
             metadata={},
             boundary=None,
             stackup={"layers": []},
-            nets=[Net(name="GND")],  # pyright: ignore[reportCallIssue]
+            nets=[Net(name="GND")],  # basedpyright: ignore[reportCallIssue]
             components={},
             traces={},
             vias={"v1": via},

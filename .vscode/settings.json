@@ -1,0 +1,10 @@
+{
+  "basedpyright.analysis.typeCheckingMode": "standard",
+  "basedpyright.analysis.diagnosticMode": "workspace",
+
+  // Disable Pylance type-checking in this workspace (we use BasedPyright instead).
+  "python.analysis.typeCheckingMode": "off",
+
+  // Ruff is typically used for import organization / formatting.
+  "basedpyright.disableOrganizeImports": true
+}
