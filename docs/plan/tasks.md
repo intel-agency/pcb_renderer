@@ -10,7 +10,6 @@ Add support for docker and docker compose to project.
 
 - include support for the plugin system.
 
-
 ### D2 LLM plugin local model support
 
 add local model with ONNX runtime HW acceleration support to LLM plugin
