@@ -56,7 +56,7 @@ Some golden master output comparison tests exist, but not for all example design
 
 - Add missing tests.
 
-### **D5** README improvements
+### **D5** README improvements **COMPLETED**
 
 Updates to improve the README files:
 
