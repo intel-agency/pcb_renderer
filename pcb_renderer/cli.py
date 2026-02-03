@@ -12,7 +12,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from .parse import load_board
+from .parse import parse_board_data, parse_board_json, read_board_file
 from .render import render_board
 from .stats import compute_stats
 from .validate import CHECKS_RUN, validate_board
@@ -48,9 +48,24 @@ def main(argv: list[str] | None = None) -> int:
     verbose = args.verbose and not args.quiet
 
     if verbose:
-        print(f"Loading board from {input_path}...")
+        print(f"Loading board file from {input_path}...")
 
-    board, parse_errors = load_board(Path(input_path))
+    raw_text, file_errors = read_board_file(Path(input_path))
+    parse_errors: List[Any] = list(file_errors)
+    board = None
+
+    if not file_errors and raw_text is not None:
+        if verbose:
+            print("Parsing JSON...")
+        data, json_errors = parse_board_json(raw_text)
+        parse_errors.extend(json_errors)
+
+        if not json_errors and data is not None:
+            if verbose:
+                print("Parsing board data...")
+            board, board_errors = parse_board_data(data)
+            parse_errors.extend(board_errors)
+
     all_errors = list(parse_errors)
     parse_success = not parse_errors and board is not None
 

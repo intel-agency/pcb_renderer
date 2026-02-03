@@ -108,21 +108,11 @@ def _parse_board_objects(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def load_board(path: Path) -> Tuple[Board | None, List[ValidationError]]:
+def read_board_file(path: Path) -> Tuple[str | None, List[ValidationError]]:
     errors: List[ValidationError] = []
     try:
         raw_text = path.read_text()
-        data = json.loads(raw_text)
-    except json.JSONDecodeError as exc:
-        errors.append(
-            ValidationError(
-                code=ErrorCode.MALFORMED_JSON,
-                severity=Severity.ERROR,
-                message=f"Invalid JSON: {exc}",
-                json_path="$",
-            )
-        )
-        return None, errors
+        return raw_text, errors
     except OSError as exc:
         errors.append(
             ValidationError(
@@ -134,6 +124,26 @@ def load_board(path: Path) -> Tuple[Board | None, List[ValidationError]]:
         )
         return None, errors
 
+
+def parse_board_json(raw_text: str) -> Tuple[Dict[str, Any] | None, List[ValidationError]]:
+    errors: List[ValidationError] = []
+    try:
+        data = json.loads(raw_text)
+        return data, errors
+    except json.JSONDecodeError as exc:
+        errors.append(
+            ValidationError(
+                code=ErrorCode.MALFORMED_JSON,
+                severity=Severity.ERROR,
+                message=f"Invalid JSON: {exc}",
+                json_path="$",
+            )
+        )
+        return None, errors
+
+
+def parse_board_data(data: Dict[str, Any]) -> Tuple[Board | None, List[ValidationError]]:
+    errors: List[ValidationError] = []
     data, unit_errors = normalize_units(data)
     errors.extend(unit_errors)
     if unit_errors:
@@ -153,3 +163,20 @@ def load_board(path: Path) -> Tuple[Board | None, List[ValidationError]]:
             )
         )
         return None, errors
+
+
+def load_board(path: Path) -> Tuple[Board | None, List[ValidationError]]:
+    errors: List[ValidationError] = []
+    raw_text, file_errors = read_board_file(path)
+    errors.extend(file_errors)
+    if file_errors or raw_text is None:
+        return None, errors
+
+    data, json_errors = parse_board_json(raw_text)
+    errors.extend(json_errors)
+    if json_errors or data is None:
+        return None, errors
+
+    board, parse_errors = parse_board_data(data)
+    errors.extend(parse_errors)
+    return board, errors
