@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 from .errors import ErrorCode, Severity, ValidationError
-from .geometry import Point, Polygon, Polyline
+from .geometry import Circle, Point, Polygon, Polyline
 from .models import Board, Layer
 
 MICRON_TO_MM = 0.001
@@ -101,9 +101,18 @@ def _parse_board_objects(data: Dict[str, Any]) -> Dict[str, Any]:
             via["center"] = Point(x=center[0], y=center[1])
 
     for keepout in data.get("keepouts", []):
-        if "shape" in keepout and "coordinates" in keepout["shape"]:
-            coords = keepout["shape"]["coordinates"]
-            keepout["shape"] = Polygon(points=parse_coordinates(coords))
+        if "shape" in keepout:
+            shape_data = keepout["shape"]
+            shape_type = shape_data.get("type", "").lower()
+            if shape_type == "circle" and "center" in shape_data and "radius" in shape_data:
+                center = shape_data["center"]
+                keepout["shape"] = Circle(
+                    center=Point(x=center[0], y=center[1]),
+                    radius=shape_data["radius"],
+                )
+            elif "coordinates" in shape_data:
+                coords = shape_data["coordinates"]
+                keepout["shape"] = Polygon(points=parse_coordinates(coords))
 
     return data
 

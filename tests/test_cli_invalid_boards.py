@@ -8,7 +8,7 @@ from pcb_renderer.errors import ErrorCode
 
 BOARDS = Path(__file__).resolve().parent.parent / "boards"
 INVALID_CASES = [
-    ("board.json", {ErrorCode.PARSE_ERROR}),
+    ("board.json", {ErrorCode.NONEXISTENT_NET}),  # Pins with empty net_name
     ("board_eta.json", {ErrorCode.NEGATIVE_WIDTH}),
     ("board_kappa.json", {ErrorCode.MALFORMED_TRACE, ErrorCode.DANGLING_TRACE}),
     ("board_lambda.json", {ErrorCode.INVALID_VIA_GEOMETRY, ErrorCode.NONEXISTENT_NET}),
