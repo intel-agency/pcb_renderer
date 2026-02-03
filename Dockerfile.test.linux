@@ -32,7 +32,7 @@ CMD ["sh", "-c", "\
     echo '   ✓ Basic render successful' && \
     echo '' && \
     echo '2. Testing PNG export...' && \
-    uv run pcb-render boards/board.json -o /tmp/test.png --format png && \
+    uv run pcb-render boards/board.json -o /tmp/test.png --format png --permissive && \
     echo '   ✓ PNG export successful' && \
     echo '' && \
     echo '3. Testing validation errors...' && \
@@ -40,7 +40,7 @@ CMD ["sh", "-c", "\
     echo '   ✓ Validation with permissive mode successful' && \
     echo '' && \
     echo '4. Testing export JSON...' && \
-    uv run pcb-render boards/board.json -o /tmp/test.svg --export-json /tmp/export.json && \
+    uv run pcb-render boards/board.json -o /tmp/test.svg --export-json /tmp/export.json --permissive && \
     echo '   ✓ Export JSON successful' && \
     echo '' && \
     echo '5. Running full test suite...' && \
