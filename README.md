@@ -62,7 +62,7 @@ pip install git+https://github.com/intel-agency/pcb-renderer.git
 ### Extras
 
 | Extra | Contents | Command |
-|-------|----------|---------|
+| --- | --- | --- |
 | `dev` | pytest, ruff, basedpyright | `uv sync --extra dev` |
 | `llm` | OpenAI client, Typer CLI | `uv sync --extra llm` |
 | `full` | All of the above | `uv sync --extra full` |
@@ -88,7 +88,7 @@ uv run pcb-render boards\board.json -o out\board.svg
 ### Key CLI flags
 
 | Flag | Description |
-|------|-------------|
+| --- | --- |
 | `--open` | Opens the rendered output in your default viewer after rendering |
 | `--permissive` | Renders the board even if validation errors are found (useful for debugging malformed boards) |
 | `--export-json PATH` | Exports structured JSON with parse results, validation errors, and stats |
@@ -120,8 +120,13 @@ uv run pcb-render boards/board.json -o out/board.svg --export-json out/board.exp
 uv sync --extra llm
 
 # Set your API key (one of these)
-export OPENAI_API_KEY="sk-..."           # Linux/macOS
-$env:OPENAI_API_KEY = "sk-..."           # PowerShell
+# Project-specific (recommended):
+export PCBR_OPENAI_API_KEY="sk-..."           # Linux/macOS
+$env:PCBR_OPENAI_API_KEY = "sk-..."           # PowerShell
+
+# Or standard OPENAI_* (picked up automatically):
+export OPENAI_API_KEY="sk-..."                # Linux/macOS
+$env:OPENAI_API_KEY = "sk-..."                # PowerShell
 ```
 
 ### Integrated CLI usage
@@ -150,24 +155,24 @@ cp llm_plugin/.env.example llm_plugin/.env
 
 # Edit with your API credentials
 # For ChatGPT/OpenAI:
-LLM_BACKEND=http
-OPENAI_API_KEY=sk-your-actual-key-here
+PCBR_LLM_BACKEND=http
+PCBR_OPENAI_API_KEY=sk-your-actual-key-here
 
 # For Z.AI GLM (Zhipu AI):
-LLM_BACKEND=http
-OPENAI_API_KEY=your-zhipu-api-key
-OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4/
-OPENAI_MODEL=glm-4
+PCBR_LLM_BACKEND=http
+PCBR_OPENAI_API_KEY=your-zhipu-api-key
+PCBR_OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4/
+PCBR_OPENAI_MODEL=glm-4
 ```
 
 Alternatively, set environment variables directly:
 
-| Variable | Purpose |
-|----------|---------|
-| `LLM_BACKEND` | Backend: `template` (default), `http`, `openai`, `local` |
-| `OPENAI_API_KEY` | API key for OpenAI-compatible endpoints |
-| `OPENAI_BASE_URL` | Custom API endpoint (e.g., Azure OpenAI, Z.AI GLM) |
-| `OPENAI_MODEL` | Model name (default: `gpt-4o-mini`) |
+| Variable | Purpose | Precedence |
+| --- | --- | --- |
+| `PCBR_LLM_BACKEND` / `LLM_BACKEND` | Backend: `template` (default), `http`, `openai`, `local` | PCBR_* overrides |
+| `PCBR_OPENAI_API_KEY` / `OPENAI_API_KEY` | API key for OpenAI-compatible endpoints | PCBR_* overrides |
+| `PCBR_OPENAI_BASE_URL` / `OPENAI_BASE_URL` | Custom API endpoint (e.g., Azure OpenAI, Z.AI GLM) | PCBR_* overrides |
+| `PCBR_OPENAI_MODEL` / `OPENAI_MODEL` | Model name (default: `gpt-4o-mini`) | PCBR_* overrides |
 
 See [llm_plugin/README.md](llm_plugin/README.md) for full details.
 
@@ -178,7 +183,7 @@ See [llm_plugin/README.md](llm_plugin/README.md) for full details.
 The challenge includes 14+ intentionally malformed boards. The validator detects all of them:
 
 | Board | Error | What's Wrong |
-|-------|-------|--------------|
+| --- | --- | --- |
 | `board_theta.json` | `NONEXISTENT_NET` | Via references net `NONEXISTENT_NET_XYZ` which doesn't exist |
 | `board_kappa.json` | `MALFORMED_TRACE` | Trace has only 1 point (minimum 2 required) |
 | `board_eta.json` | `NEGATIVE_WIDTH` | Trace width is `-100` (must be positive) |
@@ -202,7 +207,7 @@ The challenge includes 14+ intentionally malformed boards. The validator detects
 ### Design decisions
 
 | Decision | Rationale |
-|----------|-----------|
+| --- | --- |
 | **Headless Matplotlib** | `matplotlib.use("Agg")` before pyplot import ensures CI/Docker compatibility |
 | **Deterministic SVG** | `svg.hashsalt = "pcb-renderer"` + `svg.fonttype = "none"` for reproducible golden tests |
 | **Millimeters internally** | All coordinates normalized to mm; input accepts `MICRON` or `MILLIMETER` only |
@@ -220,7 +225,7 @@ The challenge includes 14+ intentionally malformed boards. The validator detects
 
 ---
 
-## ✅ Testing
+## Testing
 
 ```bash
 # Run all tests with coverage
@@ -236,7 +241,7 @@ uv run basedpyright
 **Test coverage:** 21 tests, ~76% line coverage
 
 | Test File | Coverage |
-|-----------|----------|
+| --- | --- |
 | `test_models.py` | Pydantic models, NaN rejection, rotation bounds |
 | `test_parse.py` | Coordinate parsing, unit normalization |
 | `test_validate.py` | All 18 validation rules |
@@ -252,7 +257,7 @@ uv run basedpyright
 
 ## 📁 Repository Structure
 
-```
+```text
 pcb_renderer/       # Core package
 ├── cli.py          # Main entry point, argument parsing
 ├── parse.py        # JSON loading, unit normalization

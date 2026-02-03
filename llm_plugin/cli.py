@@ -23,8 +23,9 @@ def _load_json(path: Path) -> Dict[str, Any]:
 
 
 def _ensure_backend():
-    backend = os.getenv("LLM_BACKEND", "template").lower()
-    return backend
+    # PCBR_LLM_BACKEND overrides LLM_BACKEND
+    backend = os.getenv("PCBR_LLM_BACKEND") or os.getenv("LLM_BACKEND", "template")
+    return backend.lower()
 
 
 def _emit(text: str) -> None:
