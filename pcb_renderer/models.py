@@ -101,7 +101,7 @@ class Keepout(BaseModel):
     uid: str
     name: str
     layer: str
-    shape: Polygon | Circle
+    shape: Optional[Polygon | Circle]
     keepout_type: str
 
     model_config = {"extra": "ignore", "populate_by_name": True}

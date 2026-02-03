@@ -101,7 +101,7 @@ def _parse_board_objects(data: Dict[str, Any]) -> Dict[str, Any]:
             via["center"] = Point(x=center[0], y=center[1])
 
     for keepout in data.get("keepouts", []):
-        if "shape" in keepout:
+        if "shape" in keepout and isinstance(keepout["shape"], dict):
             shape_data = keepout["shape"]
             shape_type = shape_data.get("type", "").lower()
             if shape_type == "circle":

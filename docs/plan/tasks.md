@@ -66,7 +66,7 @@ Updates to improve the README files:
 2. collapse pwsh command instrucitons into bash/zsh bc they are the same if you use forward slahes in ppwsh (double-check each command for pwsh compatibility)
 3. get rid of standalone plugin invocation section
 4. what does comment on line "cp .env.example .env   # Configure uv to use Hatchling backend" mean? (reference to hatchling backend seems out of place here.)
-5. add section addressing the <docs\input\Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc and the main important items stated in it for the reviewer to see up front.
+5. add section addressing the <docs/input/Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc and the main important items stated in it for the reviewer to see up front.
 
 ### **D6** Docker container platform smoke tests **COMPLETED**
 
@@ -110,7 +110,7 @@ Add comments throughout the codebase to explain complex logic, function purposes
 
 Esp. focus on the parse, validate, and render modules.
 
-- Mention the 14 invalid board errors from the <docs\input\Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc where applicable.
+- Mention the 14 invalid board errors from the <docs/input/Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc where applicable.
 
 - Include docstrings for all non-trivial functions and classes.
 
@@ -118,7 +118,7 @@ Esp. focus on the parse, validate, and render modules.
 
 - Add comments explaining the overall architecture and data flow of the application.
 
-- Add comments that address all items mentioned in the <docs\input\Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc where relevant.
+- Add comments that address all items mentioned in the <docs/input/Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc where relevant.
 
 ## Completed Tasks
 

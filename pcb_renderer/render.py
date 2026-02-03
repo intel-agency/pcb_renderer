@@ -142,6 +142,9 @@ def draw_component(ax, component: Component, board_height: float) -> None:
 
 def draw_keepout(ax, keepout, board_height: float) -> None:
     shape = keepout.shape
+    if shape is None:
+        return
+
     patch_kwargs = {
         "facecolor": LAYER_COLORS.get("KEEP_OUT", "#FF0000"),
         "edgecolor": "red",
