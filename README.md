@@ -50,6 +50,7 @@ uv run pytest --cov
 ```bash
 git clone https://github.com/intel-agency/pcb-renderer.git
 cd pcb-renderer
+cp .env.example .env   # Configure uv to use Hatchling backend
 uv sync --all-extras   # installs core + dev tools + LLM plugin
 ```
 
@@ -236,6 +237,15 @@ uv run ruff check .
 
 # Type checking
 uv run basedpyright
+```
+
+## Build
+
+```bash
+# Build a wheel and sdist with uv
+# Note: Project uses Hatchling backend. Set UV_NO_BUILD_OPTIMIZATION=true in .env
+# or use --force-pep517 flag to bypass uv's internal build optimization
+uv build --force-pep517
 ```
 
 **Test coverage:** 21 tests, ~76% line coverage

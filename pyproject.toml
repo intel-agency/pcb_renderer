@@ -53,3 +53,8 @@ include = ["pcb_renderer", "llm_plugin"]
 [tool.pytest.ini_options]
 addopts = "-q --cov --cov-report=term-missing"
 testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.14",
+]

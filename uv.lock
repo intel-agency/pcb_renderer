@@ -779,6 +779,11 @@ llm = [
     { name = "typer" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "ruff" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "basedpyright", marker = "extra == 'dev'", specifier = ">=1.37.3" },
@@ -802,6 +807,9 @@ requires-dist = [
     { name = "typer", marker = "extra == 'llm'", specifier = ">=0.9" },
 ]
 provides-extras = ["dev", "llm", "full"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "ruff", specifier = ">=0.14.14" }]
 
 [[package]]
 name = "pillow"
