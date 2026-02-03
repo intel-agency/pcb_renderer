@@ -108,7 +108,7 @@ Add comments throughout the codebase to explain complex logic, function purposes
 
 Esp. focus on the parse, validate, and render modules.
 
-- Mention the 14 invalid board errros from the <docs\input\Quilter Backend Engineer Code Challenge 1-27.md> challenege interview doc where applicable.
+- Mention the 14 invalid board errors from the <docs\input\Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc where applicable.
 
 - Include docstrings for all non-trivial functions and classes.
 

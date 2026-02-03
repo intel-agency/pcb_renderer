@@ -104,12 +104,26 @@ def _parse_board_objects(data: Dict[str, Any]) -> Dict[str, Any]:
         if "shape" in keepout:
             shape_data = keepout["shape"]
             shape_type = shape_data.get("type", "").lower()
-            if shape_type == "circle" and "center" in shape_data and "radius" in shape_data:
-                center = shape_data["center"]
-                keepout["shape"] = Circle(
-                    center=Point(x=center[0], y=center[1]),
-                    radius=shape_data["radius"],
-                )
+            if shape_type == "circle":
+                center = shape_data.get("center")
+                radius = shape_data.get("radius")
+                # Validate circle structure to avoid parse-time errors on malformed keepouts
+                if (
+                    isinstance(center, (list, tuple))
+                    and len(center) == 2
+                    and isinstance(radius, (int, float))
+                ):
+                    try:
+                        keepout["shape"] = Circle(
+                            center=Point(x=center[0], y=center[1]),
+                            radius=radius,
+                        )
+                    except (TypeError, ValueError, IndexError):
+                        # Malformed circle keepout; drop the shape for permissive parsing
+                        keepout["shape"] = None
+                else:
+                    # Missing or invalid center/radius; drop the shape to stay permissive
+                    keepout["shape"] = None
             elif "coordinates" in shape_data:
                 coords = shape_data["coordinates"]
                 keepout["shape"] = Polygon(points=parse_coordinates(coords))

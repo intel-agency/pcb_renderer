@@ -95,6 +95,8 @@ class Via(BaseModel):
     span: Dict[str, str]
 
     model_config = {"extra": "ignore", "populate_by_name": True}
+
+
 class Keepout(BaseModel):
     uid: str
     name: str
