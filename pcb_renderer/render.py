@@ -142,18 +142,22 @@ def draw_component(ax, component: Component, board_height: float) -> None:
 
 def draw_keepout(ax, keepout, board_height: float) -> None:
     shape = keepout.shape
+    patch_kwargs = {
+        "facecolor": LAYER_COLORS.get("KEEP_OUT", "#FF0000"),
+        "edgecolor": "red",
+        "alpha": 0.3,
+        "hatch": "///",
+        "linewidth": 2,
+        "zorder": 7,
+    }
+
     if isinstance(shape, Circle):
         center_x = shape.center.x
         center_y = board_height - shape.center.y
         patch = mpatches.Circle(
             (center_x, center_y),
             shape.radius,
-            facecolor=LAYER_COLORS.get("KEEP_OUT", "#FF0000"),
-            edgecolor="red",
-            alpha=0.3,
-            hatch="///",
-            linewidth=2,
-            zorder=7,
+            **patch_kwargs,
         )
     else:
         xs = [p.x for p in shape.points]
@@ -161,11 +165,6 @@ def draw_keepout(ax, keepout, board_height: float) -> None:
         patch = mpatches.Polygon(
             list(zip(xs, ys)),
             closed=True,
-            facecolor=LAYER_COLORS.get("KEEP_OUT", "#FF0000"),
-            edgecolor="red",
-            alpha=0.3,
-            hatch="///",
-            linewidth=2,
-            zorder=7,
+            **patch_kwargs,
         )
     ax.add_patch(patch)
