@@ -118,7 +118,9 @@ def validate_board(board: Board) -> List[ValidationError]:
     # === BUILD REFERENCE SETS ===
     # Used for cross-referencing traces, vias, and pins against defined nets/layers
     net_names = {net.name for net in board.nets}
-    layer_names = {layer.name for layer in board.stackup.get("layers", [])}
+    # Handle both Layer objects and plain dicts for flexibility
+    layers = board.stackup.get("layers", [])
+    layer_names = {(layer.name if hasattr(layer, "name") else layer["name"]) for layer in layers}
 
     # === TRACE VALIDATION ===
     # Task 3: Traces - validate paths, net refs, layer refs, widths
@@ -292,7 +294,11 @@ def validate_board(board: Board) -> List[ValidationError]:
             )
         )
     else:
-        indices = sorted(layer.index for layer in board.stackup.get("layers", []))
+        # Handle both Layer objects and plain dicts for flexibility
+        layers = board.stackup.get("layers", [])
+        indices = sorted(
+            (layer.index if hasattr(layer, "index") else layer["index"]) for layer in layers
+        )
         # Layer indices must be contiguous (no gaps)
         if indices != list(range(indices[0], indices[0] + len(indices))):
             errors.append(

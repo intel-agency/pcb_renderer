@@ -4,7 +4,7 @@
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-21%20passed-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-161%20passed-brightgreen.svg)](#testing)
 
 A CLI tool that parses ECAD JSON board files, validates against **18 semantic rules**, and renders publication-quality SVG/PNG/PDF output using Matplotlib. Includes an optional **LLM plugin** for natural-language error explanations and design analysis.
 
@@ -81,6 +81,9 @@ All **14 intentionally malformed boards** from the challenge are correctly detec
 Verify the implementation in < 5 minutes:
 
 ```bash
+# Install dependencies first
+uv sync --all-extras
+
 # 1. Render a valid board
 uv run pcb-render boards/board_alpha.json -o out/alpha.svg --open
 
