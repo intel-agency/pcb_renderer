@@ -21,6 +21,7 @@ llm = [
     "openai>=1.0.0",
     "typer>=0.9",
     "pydantic>=2.0",
+    "python-dotenv>=1.0.0",
 ]
 full = [
     "pytest>=7.4",
@@ -30,6 +31,7 @@ full = [
     "openai>=1.0.0",
     "typer>=0.9",
     "pydantic>=2.0",
+    "python-dotenv>=1.0.0",
 ]
 
 [project.scripts]

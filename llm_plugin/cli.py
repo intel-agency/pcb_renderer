@@ -6,10 +6,14 @@ from pathlib import Path
 from typing import Any, Dict
 
 import typer
+from dotenv import load_dotenv
 
 from .client import get_client
 from .context import filter_context
 from .prompts import build_analyze_prompt, build_explain_prompt, build_suggest_prompt
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = typer.Typer(add_completion=False)
 

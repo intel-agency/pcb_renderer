@@ -30,14 +30,44 @@ Set `LLM_BACKEND` environment variable:
 | `http` / `openai` | OpenAI-compatible API (requires API key) |
 | `local` | Placeholder for on-device models |
 
-### 2. Set API key (for http/openai backends)
+### 2. Configure via .env file (recommended)
+
+Copy the example environment file and customize it:
+
+```bash
+# Copy the template
+cp llm_plugin/.env.example llm_plugin/.env
+
+# Edit .env with your credentials
+```
+
+**For ChatGPT/OpenAI:**
+
+```bash
+LLM_BACKEND=http
+OPENAI_API_KEY=sk-your-actual-key-here
+# Optional: OPENAI_MODEL=gpt-4o-mini
+```
+
+**For Z.AI GLM (Zhipu AI):**
+
+```bash
+LLM_BACKEND=http
+OPENAI_API_KEY=your-zhipu-api-key
+OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4/
+OPENAI_MODEL=glm-4
+```
+
+### 3. Alternative: Set environment variables directly
 
 ```bash
 # Linux/macOS
 export OPENAI_API_KEY="sk-..."
+export LLM_BACKEND="http"
 
 # Windows PowerShell
 $env:OPENAI_API_KEY = "sk-..."
+$env:LLM_BACKEND = "http"
 ```
 
 ---

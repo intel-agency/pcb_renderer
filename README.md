@@ -30,6 +30,7 @@ uv run pytest --cov
 ```
 
 **Windows PowerShell:**
+
 ```powershell
 git clone https://github.com/intel-agency/pcb-renderer.git
 cd pcb-renderer
@@ -141,11 +142,32 @@ uv run python -m llm_plugin analyze out/board.export.json
 
 ### Environment variables
 
+Create a `.env` file in the `llm_plugin/` directory using the provided `.env.example` template:
+
+```bash
+# Copy the example file
+cp llm_plugin/.env.example llm_plugin/.env
+
+# Edit with your API credentials
+# For ChatGPT/OpenAI:
+LLM_BACKEND=http
+OPENAI_API_KEY=sk-your-actual-key-here
+
+# For Z.AI GLM (Zhipu AI):
+LLM_BACKEND=http
+OPENAI_API_KEY=your-zhipu-api-key
+OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4/
+OPENAI_MODEL=glm-4
+```
+
+Alternatively, set environment variables directly:
+
 | Variable | Purpose |
 |----------|---------|
 | `LLM_BACKEND` | Backend: `template` (default), `http`, `openai`, `local` |
 | `OPENAI_API_KEY` | API key for OpenAI-compatible endpoints |
-| `OPENAI_BASE_URL` | Custom API endpoint (e.g., Azure OpenAI) |
+| `OPENAI_BASE_URL` | Custom API endpoint (e.g., Azure OpenAI, Z.AI GLM) |
+| `OPENAI_MODEL` | Model name (default: `gpt-4o-mini`) |
 
 See [llm_plugin/README.md](llm_plugin/README.md) for full details.
 
