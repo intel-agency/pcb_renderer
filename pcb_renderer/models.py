@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from .geometry import Point, Polygon, Polyline
+from .geometry import Circle, Point, Polygon, Polyline
 
 
 class Side(str, Enum):
@@ -95,11 +95,13 @@ class Via(BaseModel):
     span: Dict[str, str]
 
     model_config = {"extra": "ignore", "populate_by_name": True}
+
+
 class Keepout(BaseModel):
     uid: str
     name: str
     layer: str
-    shape: Polygon
+    shape: Optional[Polygon | Circle]
     keepout_type: str
 
     model_config = {"extra": "ignore", "populate_by_name": True}

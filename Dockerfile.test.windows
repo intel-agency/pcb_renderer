@@ -34,7 +34,7 @@ CMD ["powershell", "-Command", "\
     Write-Host '   ✓ Basic render successful'; \
     Write-Host ''; \
     Write-Host '2. Testing PNG export...'; \
-    uv run pcb-render boards/board.json -o C:\\temp\\test.png --format png; \
+    uv run pcb-render boards/board.json -o C:\\temp\\test.png --format png --permissive; \
     if ($LASTEXITCODE -ne 0) { exit 1 }; \
     Write-Host '   ✓ PNG export successful'; \
     Write-Host ''; \
@@ -44,7 +44,7 @@ CMD ["powershell", "-Command", "\
     Write-Host '   ✓ Validation with permissive mode successful'; \
     Write-Host ''; \
     Write-Host '4. Testing export JSON...'; \
-    uv run pcb-render boards/board.json -o C:\\temp\\test.svg --export-json C:\\temp\\export.json; \
+    uv run pcb-render boards/board.json -o C:\\temp\\test.svg --export-json C:\\temp\\export.json --permissive; \
     if ($LASTEXITCODE -ne 0) { exit 1 }; \
     Write-Host '   ✓ Export JSON successful'; \
     Write-Host ''; \

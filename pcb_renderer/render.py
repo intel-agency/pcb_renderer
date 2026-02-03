@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib import patheffects
 
 from .colors import LAYER_COLORS
-from .geometry import Point, Polygon
+from .geometry import Circle, Point, Polygon
 from .models import Board, Component, Trace, Via
 from .transform import ecad_to_svg, compute_component_transform, transform_point
 
@@ -141,16 +141,33 @@ def draw_component(ax, component: Component, board_height: float) -> None:
 
 
 def draw_keepout(ax, keepout, board_height: float) -> None:
-    xs = [p.x for p in keepout.shape.points]
-    ys = [board_height - p.y for p in keepout.shape.points]
-    patch = mpatches.Polygon(
-        list(zip(xs, ys)),
-        closed=True,
-        facecolor=LAYER_COLORS.get("KEEP_OUT", "#FF0000"),
-        edgecolor="red",
-        alpha=0.3,
-        hatch="///",
-        linewidth=2,
-        zorder=7,
-    )
+    shape = keepout.shape
+    if shape is None:
+        return
+
+    patch_kwargs = {
+        "facecolor": LAYER_COLORS.get("KEEP_OUT", "#FF0000"),
+        "edgecolor": "red",
+        "alpha": 0.3,
+        "hatch": "///",
+        "linewidth": 2,
+        "zorder": 7,
+    }
+
+    if isinstance(shape, Circle):
+        center_x = shape.center.x
+        center_y = board_height - shape.center.y
+        patch = mpatches.Circle(
+            (center_x, center_y),
+            shape.radius,
+            **patch_kwargs,
+        )
+    else:
+        xs = [p.x for p in shape.points]
+        ys = [board_height - p.y for p in shape.points]
+        patch = mpatches.Polygon(
+            list(zip(xs, ys)),
+            closed=True,
+            **patch_kwargs,
+        )
     ax.add_patch(patch)
