@@ -118,12 +118,21 @@ Esp. focus on the parse, validate, and render modules.
 
 - Add comments that address all items mentioned in the <docs/input/Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc where relevant.
 
+## Completed Tasks
+
 ### D13 More README improvements
 
-1. what does comment on line "cp .env.example .env   # Configure uv to use Hatchling backend" mean? (reference to hatchling backend seems out of place here.)
-2. add section addressing the <docs/input/Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc and the main important items stated in it for the reviewer to see up front.
+**Changes Made:**
+1. **Fixed .env comment confusion** - Removed the `cp .env.example .env` line from the installation section since it's only needed for building (not for sync/running). Clarified the comment in the Build section to explain that `.env` is optional and used for uv build backend configuration.
 
-## Completed Tasks
+2. **Added "Quilter Challenge Requirements" section** - Created a comprehensive section right after Quick Start that:
+   - Lists all core challenge requirements with implementation details and validation links
+   - Shows a complete table of all 14+ invalid boards detected by validation rules
+   - Provides a "Reviewer Quick Validation" guide with 4 simple commands
+   - Documents that the project exceeds requirements (18 total error codes vs. 14 minimum)
+   - Links to relevant test files and documentation for verification
+
+3. **Reorganized validation information** - Moved the detailed invalid boards table from the old "Invalid Boards & Detected Issues" section into the new Challenge Requirements section, and simplified the remaining validation details into an "Additional Validation Details" section.
 
 ### D10 Add codeql security scanning to CI pipeline
 

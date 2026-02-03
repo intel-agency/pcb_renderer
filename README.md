@@ -31,6 +31,71 @@ uv run pytest --cov
 
 ---
 
+## 🎯 Quilter Challenge Requirements
+
+This project was built to satisfy the **Quilter Backend Engineer Code Challenge**. Here's how it meets each requirement:
+
+### ✅ Core Requirements Met
+
+| Requirement | Implementation | Validation |
+| --- | --- | --- |
+| **Parse ECAD JSON** | `pcb_renderer/parse.py` normalizes units (MICRON/MILLIMETER → mm) and handles flexible coordinate formats | See [test_parse.py](tests/test_parse.py) |
+| **Board Boundary** | Draws board outline from `boundary.coordinates` | Rendered in all example boards |
+| **Components** | Draws component outlines, reference designators (R1, C1, U1), handles rotation | See [board_alpha.json](boards/board_alpha.json) rendering |
+| **Traces** | Draws traces as paths with specified width, different colors per layer | Multi-layer boards like [board_6layer_hdi.json](boards/board_6layer_hdi.json) |
+| **Vias** | Draws vias as circles at center positions with correct diameter | All valid boards include via rendering |
+| **Keepout Regions** | Draws keepouts with distinct hatched pattern | See [test_circle_keepouts.py](tests/test_circle_keepouts.py) |
+| **Error Detection** | **Returns validation errors for all 14+ invalid boards** (see table below) | [test_validate.py](tests/test_validate.py) validates all error codes |
+| **Output Formats** | Renders as SVG (default), PNG, PDF | `--format` flag supports all three |
+| **Code Quality** | 21 test files, ~76% coverage, type checking, linting | `uv run pytest --cov` |
+| **Unit Testing** | Comprehensive test suite with golden master comparisons | [tests/](tests/) directory |
+| **Code Comments** | Docstrings, inline comments, architecture docs | Throughout codebase + [AGENTS.md](AGENTS.md) |
+| **LLM Usage** | Optional LLM plugin for natural-language error explanations | [llm_plugin/](llm_plugin/) with OpenAI integration |
+| **Quick Review** | **< 5 minute setup**, clear docs, instant rendering | See "Reviewer Quick Start" above |
+
+### 🔍 Invalid Board Detection (14+ Boards)
+
+All **14 intentionally malformed boards** from the challenge are correctly detected:
+
+| Board | Error Code | Detection |
+| --- | --- | --- |
+| `board_theta.json` | `NONEXISTENT_NET` | ✅ Via references non-existent net |
+| `board_kappa.json` | `MALFORMED_TRACE` | ✅ Trace has < 2 points |
+| `board_eta.json` | `NEGATIVE_WIDTH` | ✅ Negative trace width |
+| `board_xi.json` | `MALFORMED_STACKUP` | ✅ Empty layer stackup |
+| `board_lambda.json` | `INVALID_VIA_GEOMETRY` | ✅ Via hole ≥ diameter |
+| `board_mu.json` | `DANGLING_TRACE` | ✅ Trace references non-existent net |
+| `board_nu.json` | `SELF_INTERSECTING_BOUNDARY` | ✅ Self-intersecting boundary |
+| `board_omicron.json` | `COMPONENT_OUTSIDE_BOUNDARY` | ✅ Component outside board |
+| `board_pi.json` | `INVALID_ROTATION` | ✅ Component rotation > 360° |
+| `board_rho.json` | `NONEXISTENT_LAYER` | ✅ Trace references invalid layer |
+| `board_sigma.json` | `INVALID_PIN_REFERENCE` | ✅ Pin references wrong component |
+| `board_tau.json` | `MISSING_BOUNDARY` | ✅ No boundary polygon |
+| `board_zeta.json` | `EMPTY_BOARD` | ✅ No components/traces/vias |
+| `board_iota.json` | `MALFORMED_COORDINATES` | ✅ Invalid coordinate format |
+
+**Validation is comprehensive** (18 total error codes) — see [pcb_renderer/errors.py](pcb_renderer/errors.py) for all codes.
+
+### 🚀 Reviewer Quick Validation
+
+Verify the implementation in < 5 minutes:
+
+```bash
+# 1. Render a valid board
+uv run pcb-render boards/board_alpha.json -o out/alpha.svg --open
+
+# 2. Render an invalid board (permissive mode shows errors)
+uv run pcb-render boards/board_theta.json -o out/theta.svg --permissive
+
+# 3. Run validation tests (confirms all 14+ invalid boards detected)
+uv run pytest tests/test_validate.py -v
+
+# 4. View all test results
+uv run pytest --cov
+```
+
+---
+
 ## 📦 Installation
 
 ### Option 1: Clone + uv (recommended)
@@ -55,7 +120,6 @@ pip install uv
 ```bash
 git clone https://github.com/intel-agency/pcb-renderer.git
 cd pcb-renderer
-cp .env.example .env   # Configure uv to use Hatchling backend
 uv sync --all-extras   # installs core + dev tools + LLM plugin
 ```
 
@@ -173,17 +237,7 @@ See [llm_plugin/README.md](llm_plugin/README.md) for full details.
 
 ---
 
-## 🔍 Invalid Boards & Detected Issues
-
-The challenge includes 14+ intentionally malformed boards. The validator detects all of them:
-
-| Board | Error | What's Wrong |
-| --- | --- | --- |
-| `board_theta.json` | `NONEXISTENT_NET` | Via references net `NONEXISTENT_NET_XYZ` which doesn't exist |
-| `board_kappa.json` | `MALFORMED_TRACE` | Trace has only 1 point (minimum 2 required) |
-| `board_eta.json` | `NEGATIVE_WIDTH` | Trace width is `-100` (must be positive) |
-| `board_xi.json` | `MALFORMED_STACKUP` | Layer stackup has empty `layers` array |
-| `board_lambda.json` | `INVALID_VIA_GEOMETRY` | Via hole size (500) ≥ diameter (400) |
+## � Additional Validation Details
 
 ### Full validation coverage (18 rules)
 
@@ -260,8 +314,10 @@ See [docs/DOCKER_TESTS.md](docs/DOCKER_TESTS.md) for details.
 
 ```bash
 # Build a wheel and sdist with uv
-# Note: Project uses Hatchling backend. Set UV_NO_BUILD_OPTIMIZATION=true in .env
+# Note: Project uses Hatchling backend with flat layout
+# Copy .env.example to .env (sets UV_NO_BUILD_OPTIMIZATION=true)
 # or use --force-pep517 flag to bypass uv's internal build optimization
+cp .env.example .env  # Optional: configure uv build backend
 uv build --force-pep517
 ```
 
