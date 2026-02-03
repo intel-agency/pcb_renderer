@@ -93,6 +93,10 @@ Add CI pipeline for LLM plugin testing to ensure functionality and reliability o
 - Test LLM plugin commands (explain, suggest-fixes, analyze)
 - Values for http/openai backend should be provided via CI secrets
 
+### D9 Add package and deploy steps to CI pipeline
+
+### D10 Add codeql security scanning to CI pipeline
+
 ## Completed Tasks
 
 ### D4 Add golden master output comparison tests for all supplied example designs
