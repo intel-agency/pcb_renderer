@@ -33,6 +33,9 @@ def explain(json_file: Path) -> None:
 
     data = _load_json(json_file)
     errors = data.get("validation_result", {}).get("errors", [])
+    if not errors:
+        _emit("No issues found while parsing and validating. This board is valid.")
+        return
     backend = _ensure_backend()
     client = get_client(backend)
     prompt = build_explain_prompt(errors)
