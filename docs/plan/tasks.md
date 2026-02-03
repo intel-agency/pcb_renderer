@@ -66,7 +66,7 @@ Updates to improve the README files:
 2. collapse pwsh command instrucitons into bash/zsh bc they are the same if you use forward slahes in ppwsh (double-check each command for pwsh compatibility)
 3. get rid of standalone plugin invocation section
 
-### D6 Docker container platform smoke tests
+### **D6** Docker container platform smoke tests **COMPLETED**
 
 Create docker container platform smoke tests to validate basic functionality of the application within a docker container environment.
 
@@ -105,3 +105,39 @@ Add CI pipeline for LLM plugin testing to ensure functionality and reliability o
 - Added golden SVG comparisons for all valid boards.
 - Added PNG/PDF render smoke tests for all valid boards.
 - Added invalid board CLI failure tests (exit code + error output).
+
+### D6 Docker container platform smoke tests
+
+Created platform smoke tests for multiple operating systems:
+
+**Created Files:**
+- `Dockerfile.test.linux` - Alpine Linux-based smoke test (lightweight)
+- `Dockerfile.test.debian` - Debian/Ubuntu-based smoke test (mainstream distro)
+- `Dockerfile.test.windows` - Windows Server Core-based smoke test
+- `docker-compose.test.yml` - Orchestration for all test containers
+- `.dockerignore` - Optimized Docker build context
+- `.github/workflows/docker-smoke-tests.yml` - CI pipeline for platform tests
+- `docs/DOCKER_TESTS.md` - Documentation for platform smoke tests
+
+**Test Coverage:**
+Each smoke test validates:
+1. Basic SVG rendering
+2. PNG format export
+3. Permissive mode with validation errors
+4. Export JSON functionality
+5. Full pytest suite
+
+**CI Integration:**
+- Alpine Linux test runs in Docker on `ubuntu-latest`
+- Debian/Ubuntu test runs in Docker on `ubuntu-latest`
+- Windows test runs in Docker on `windows-2022`
+- macOS test runs natively on `macos-latest` (no Docker support)
+
+**Platform Notes:**
+- Linux platforms use lightweight base images (Alpine ~50MB, Debian-slim ~150MB)
+- Windows uses Server Core (~4GB) - requires Windows containers mode
+- macOS runs natively on runner since Docker doesn't support macOS containers
+
+**Documentation:**
+- Updated README.md with platform smoke test instructions
+- Created comprehensive DOCKER_TESTS.md guide
