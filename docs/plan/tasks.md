@@ -110,6 +110,14 @@ Esp. focus on the parse, validate, and render modules.
 
 - Mention the 14 invalid board errros from the <docs\input\Quilter Backend Engineer Code Challenge 1-27.md> challenege interview doc where applicable.
 
+- Include docstrings for all non-trivial functions and classes.
+
+- Include inline comments for complex code sections.
+
+- Add comments explaining the overall architecture and data flow of the application.
+
+- Add comments that address all items mentioned in the <docs\input\Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc where relevant.
+
 ## Completed Tasks
 
 ### D10 Add codeql security scanning to CI pipeline
