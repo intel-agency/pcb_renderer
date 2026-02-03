@@ -4,7 +4,7 @@
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-20%20passed-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-21%20passed-brightgreen.svg)](#testing)
 
 A CLI tool that parses ECAD JSON board files, validates against **18 semantic rules**, and renders publication-quality SVG/PNG/PDF output using Matplotlib. Includes an optional **LLM plugin** for natural-language error explanations and design analysis.
 
@@ -211,7 +211,7 @@ uv run ruff check .
 uv run basedpyright
 ```
 
-**Test coverage:** 20 tests, ~76% line coverage
+**Test coverage:** 21 tests, ~76% line coverage
 
 | Test File | Coverage |
 |-----------|----------|
@@ -223,6 +223,7 @@ uv run basedpyright
 | `test_golden_render.py` | Deterministic SVG comparison |
 | `test_export_json.py` | Export payload structure |
 | `test_llm_plugin.py` | Plugin CLI with template backend |
+| `test_cli_open.py` | Cross-platform file opening |
 | `test_boards.py` | Integration tests across sample boards |
 
 ---
