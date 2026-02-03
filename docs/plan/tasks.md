@@ -102,6 +102,14 @@ Test code coverage is currently around 66%.
 
 Identify missing test coverage areas and add tests to increase overall code coverage to at least 90%.
 
+### D11 Add comments to codebase to improve readability and maintainability
+
+Add comments throughout the codebase to explain complex logic, function purposes, and class responsibilities.
+
+Esp. focus on the parse, validate, and render modules.
+
+- Mention the 14 invalid board errros from the <docs\input\Quilter Backend Engineer Code Challenge 1-27.md> challenege interview doc where applicable.
+
 ## Completed Tasks
 
 ### D10 Add codeql security scanning to CI pipeline
