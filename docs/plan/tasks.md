@@ -96,12 +96,14 @@ Add CI pipeline for LLM plugin testing to ensure functionality and reliability o
 
 ### D9 Add package and deploy steps to CI pipeline
 
-### D11 Increase test code coverage to >= 90%
+### D11 Increase test code coverage to >= 95%
 
-Test code coverage is currently around 66%.
+Test code coverage is currently around 87%.
 
-Identify missing test coverage areas and add tests to increase overall code coverage to at least 90%.
+Identify missing test coverage areas and add tests to increase overall code coverage to at least 95%.
 
+Q: Are the test files supposed to inclued in the coverage calculation/report? (i.e. tests/test_*.py)
+  
 ### D12 Add comments to codebase to improve readability and maintainability
 
 Add comments throughout the codebase to explain complex logic, function purposes, and class responsibilities.
