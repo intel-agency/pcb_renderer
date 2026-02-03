@@ -12,7 +12,7 @@ A CLI tool that parses ECAD JSON board files, validates against **18 semantic ru
 
 ## ⚡ Reviewer Quick Start (< 5 minutes)
 
-Clone, install, render, and verify—ready for review:
+Clone, install, render, and verify—ready for review (works on bash/zsh/PowerShell):
 
 ```bash
 # Clone the repository
@@ -29,23 +29,28 @@ uv run pcb-render boards/board_alpha.json -o out/board.svg --open
 uv run pytest --cov
 ```
 
-**Windows PowerShell:**
-
-```powershell
-git clone https://github.com/intel-agency/pcb-renderer.git
-cd pcb-renderer
-uv sync --all-extras
-uv run pcb-render boards/board_alpha.json -o out/board.svg --open
-uv run pytest --cov
-```
-
 ---
 
 ## 📦 Installation
 
 ### Option 1: Clone + uv (recommended)
 
-[uv](https://docs.astral.sh/uv/) is a fast Python package manager. Install it first, then:
+[uv](https://docs.astral.sh/uv/) is a fast Python package manager.
+
+**Install uv first:**
+
+```bash
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Or via pip/pipx
+pip install uv
+```
+
+**Then clone and setup:**
 
 ```bash
 git clone https://github.com/intel-agency/pcb-renderer.git
@@ -77,13 +82,10 @@ Use `--all-extras` to install everything at once.
 ### Basic rendering
 
 ```bash
-# Linux/macOS (bash/zsh)
+# Works on bash/zsh/PowerShell (use forward slashes in PowerShell)
 uv run pcb-render boards/board.json -o out/board.svg
 uv run pcb-render boards/board.json -o out/board.png --format png
 uv run pcb-render boards/board.json -o out/board.pdf --format pdf
-
-# Windows PowerShell
-uv run pcb-render boards\board.json -o out\board.svg
 ```
 
 ### Key CLI flags
@@ -136,14 +138,6 @@ $env:OPENAI_API_KEY = "sk-..."                # PowerShell
 uv run pcb-render boards/board_theta.json -o out/theta.svg --llm-explain --permissive
 uv run pcb-render boards/board.json -o out/board.svg --llm-suggest-fixes
 uv run pcb-render boards/board.json -o out/board.svg --llm-analyze
-```
-
-### Standalone plugin
-
-```bash
-uv run python -m llm_plugin explain out/board.export.json
-uv run python -m llm_plugin suggest-fixes out/board.export.json
-uv run python -m llm_plugin analyze out/board.export.json
 ```
 
 ### Environment variables
@@ -238,6 +232,29 @@ uv run ruff check .
 # Type checking
 uv run basedpyright
 ```
+
+### Platform Smoke Tests
+
+Platform smoke tests validate the application across different environments:
+
+```bash
+# Linux (Alpine) - Docker
+docker build -t pcb-renderer-test:linux-alpine -f Dockerfile.test.linux .
+docker run --rm pcb-renderer-test:linux-alpine
+
+# Linux (Debian/Ubuntu) - Docker
+docker build -t pcb-renderer-test:linux-debian -f Dockerfile.test.debian .
+docker run --rm pcb-renderer-test:linux-debian
+
+# Windows - Docker (requires Docker Desktop with Windows containers)
+docker build -t pcb-renderer-test:windows -f Dockerfile.test.windows .
+docker run --rm pcb-renderer-test:windows
+
+# macOS - Native (no Docker support)
+# Follow the Quick Start steps at the top of this README
+```
+
+See [docs/DOCKER_TESTS.md](docs/DOCKER_TESTS.md) for details.
 
 ## Build
 

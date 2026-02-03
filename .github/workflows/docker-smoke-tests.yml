@@ -1,0 +1,99 @@
+name: Platform Smoke Tests
+
+on:
+  push:
+    branches: [ master, development, nam20485 ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  docker-linux-alpine:
+    name: Docker Smoke Test (Alpine Linux)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and run Alpine Linux smoke tests
+        run: |
+          docker build -t pcb-renderer-test:linux-alpine -f Dockerfile.test.linux .
+          docker run --rm pcb-renderer-test:linux-alpine
+
+  docker-linux-debian:
+    name: Docker Smoke Test (Debian/Ubuntu)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and run Debian/Ubuntu smoke tests
+        run: |
+          docker build -t pcb-renderer-test:linux-debian -f Dockerfile.test.debian .
+          docker run --rm pcb-renderer-test:linux-debian
+
+  docker-windows:
+    name: Docker Smoke Test (Windows)
+    runs-on: windows-2022
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and run Windows smoke tests
+        run: |
+          docker build -t pcb-renderer-test:windows -f Dockerfile.test.windows .
+          docker run --rm pcb-renderer-test:windows
+        shell: powershell
+
+  macos-native:
+    name: Native Smoke Test (macOS)
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Sync dependencies
+        run: uv sync --all-extras
+
+      - name: Run macOS smoke tests
+        run: |
+          echo "=== Running macOS Native Smoke Tests ==="
+          echo ""
+          echo "1. Testing basic render..."
+          uv run pcb-render boards/board_alpha.json -o /tmp/test_alpha.svg
+          echo "   ✓ Basic render successful"
+          echo ""
+          echo "2. Testing PNG export..."
+          uv run pcb-render boards/board.json -o /tmp/test.png --format png
+          echo "   ✓ PNG export successful"
+          echo ""
+          echo "3. Testing validation errors..."
+          uv run pcb-render boards/board_theta.json -o /tmp/test_theta.svg --permissive
+          echo "   ✓ Validation with permissive mode successful"
+          echo ""
+          echo "4. Testing export JSON..."
+          uv run pcb-render boards/board.json -o /tmp/test.svg --export-json /tmp/export.json
+          echo "   ✓ Export JSON successful"
+          echo ""
+          echo "5. Running full test suite..."
+          uv run pytest --cov
+          echo "   ✓ Test suite passed"
+          echo ""
+          echo "=== All macOS Smoke Tests Passed ==="

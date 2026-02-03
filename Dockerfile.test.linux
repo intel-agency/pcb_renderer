@@ -1,0 +1,51 @@
+# Docker smoke test for Linux platform
+# Based on lightweight Alpine Linux for minimal size
+FROM python:3.11-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    freetype-dev \
+    gcc \
+    musl-dev \
+    curl
+
+WORKDIR /app
+
+# Copy project files
+COPY pyproject.toml uv.lock ./
+COPY pcb_renderer ./pcb_renderer
+COPY llm_plugin ./llm_plugin
+COPY tests ./tests
+COPY boards ./boards
+COPY README.md LICENSE ./
+
+# Install uv and sync all dependencies
+RUN pip install --no-cache-dir uv && \
+    uv sync --all-extras
+
+# Run smoke tests
+CMD ["sh", "-c", "\
+    echo '=== Running Linux Docker Smoke Tests ===' && \
+    echo '' && \
+    echo '1. Testing basic render...' && \
+    uv run pcb-render boards/board_alpha.json -o /tmp/test_alpha.svg && \
+    echo '   ✓ Basic render successful' && \
+    echo '' && \
+    echo '2. Testing PNG export...' && \
+    uv run pcb-render boards/board.json -o /tmp/test.png --format png && \
+    echo '   ✓ PNG export successful' && \
+    echo '' && \
+    echo '3. Testing validation errors...' && \
+    uv run pcb-render boards/board_theta.json -o /tmp/test_theta.svg --permissive && \
+    echo '   ✓ Validation with permissive mode successful' && \
+    echo '' && \
+    echo '4. Testing export JSON...' && \
+    uv run pcb-render boards/board.json -o /tmp/test.svg --export-json /tmp/export.json && \
+    echo '   ✓ Export JSON successful' && \
+    echo '' && \
+    echo '5. Running full test suite...' && \
+    uv run pytest --cov && \
+    echo '   ✓ Test suite passed' && \
+    echo '' && \
+    echo '=== All Linux Smoke Tests Passed ===' \
+"]
