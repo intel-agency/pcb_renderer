@@ -6,7 +6,11 @@ Natural-language error explanations, fix suggestions, and design analysis for PC
 
 ```bash
 # install project with LLM extras
+uv sync --all-extras
+
+# alternatives
 uv sync --extra llm
+uv sync --extra full
 
 # render with LLM explanations (auto-generates export JSON if not provided)
 uv run pcb-render boards/board_alpha.json -o out/alpha.svg --llm-explain
