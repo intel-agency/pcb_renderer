@@ -1,57 +1,99 @@
-# LLM plugin
+# LLM Plugin
 
-Optional plugin that explains validation errors and suggests fixes using an LLM backend. The core CLI runs without it.
+> Optional plugin that explains validation errors and suggests fixes using an LLM backend.
 
-Install
+The core CLI runs without this plugin. Install it when you want AI-powered error explanations and design analysis.
+
+---
+
+## Installation
 
 ```bash
+# LLM plugin only
 uv sync --extra llm
-```
 
-Or install everything:
-
-```bash
+# Everything (recommended)
 uv sync --all-extras
 ```
 
-Quick setup
+---
 
-- Set backend selector (defaults to `template`):
+## Quick Setup
+
+### 1. Choose a backend
+
+Set `LLM_BACKEND` environment variable:
+
+| Backend | Description |
+|---------|-------------|
+| `template` | Default. Returns formatted prompts (for testing/debugging) |
+| `http` / `openai` | OpenAI-compatible API (requires API key) |
+| `local` | Placeholder for on-device models |
+
+### 2. Set API key (for http/openai backends)
 
 ```bash
-$env:LLM_BACKEND="template"
+# Linux/macOS
+export OPENAI_API_KEY="sk-..."
+
+# Windows PowerShell
+$env:OPENAI_API_KEY = "sk-..."
 ```
 
-- For HTTP/OpenAI-compatible backends, set an API key:
+---
 
-```bash
-$env:OPENAI_API_KEY="your-key"
-```
+## CLI Usage
 
-CLI usage
+### Integrated with core CLI
 
 ```bash
 uv run pcb-render boards/board.json -o out/board.svg --llm-explain
-uv run pcb-render boards/board.json -o out/board.svg --llm-suggest-fixes --llm-analyze
+uv run pcb-render boards/board.json -o out/board.svg --llm-suggest-fixes
+uv run pcb-render boards/board.json -o out/board.svg --llm-analyze
 ```
 
-Direct module invocation
+Combine flags as needed:
+
+```bash
+uv run pcb-render boards/board_theta.json -o out/theta.svg --llm-explain --llm-suggest-fixes --permissive
+```
+
+### Standalone module invocation
 
 ```bash
 uv run python -m llm_plugin --help
-uv run python -m llm_plugin explain export.json
-uv run python -m llm_plugin suggest-fixes export.json
-uv run python -m llm_plugin analyze export.json
+uv run python -m llm_plugin explain out/board.export.json
+uv run python -m llm_plugin suggest-fixes out/board.export.json
+uv run python -m llm_plugin analyze out/board.export.json
 ```
 
-Backend environment variables
+---
 
-- `LLM_BACKEND`: `template` (default), `local`, `http`, `openai`
-- API key precedence: `OPENAI_API_KEY` → `PCB_RENDERER_LLM_API_KEY`
-- Base URL precedence: `OPENAI_BASE_URL` → `LLM_API_BASE` → `PCB_RENDERER_LLM_BASE_URL`
-- Model name: `OPENAI_MODEL` (default: `gpt-4o-mini`)
+## Environment Variables
 
-Export JSON behavior
+| Variable | Purpose | Default |
+|----------|---------|---------|
+| `LLM_BACKEND` | Backend selector | `template` |
+| `OPENAI_API_KEY` | API key for OpenAI-compatible endpoints | — |
+| `OPENAI_BASE_URL` | Custom API endpoint (e.g., Azure OpenAI) | — |
+| `OPENAI_MODEL` | Model name | `gpt-4o-mini` |
 
-- `--export-json` writes the payload consumed by the plugin.
+### Fallback precedence
+
+- **API key:** `OPENAI_API_KEY` → `PCB_RENDERER_LLM_API_KEY`
+- **Base URL:** `OPENAI_BASE_URL` → `LLM_API_BASE` → `PCB_RENDERER_LLM_BASE_URL`
+
+---
+
+## Export JSON Behavior
+
+- Use `--export-json PATH` to save the payload consumed by the plugin.
 - If LLM flags are used without `--export-json`, a temporary export is generated automatically.
+
+```bash
+# Explicit export
+uv run pcb-render boards/board.json -o out/board.svg --export-json out/board.export.json
+
+# Then analyze it standalone
+uv run python -m llm_plugin analyze out/board.export.json
+```

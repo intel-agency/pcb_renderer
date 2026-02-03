@@ -13,8 +13,11 @@ need to explain:
 - quick setup for llm plugin
 - run llm plugin
 - decision & assumtions we made wrt to rendering questions
-- list of invlaid board issues we found
-- testing thats provided
+- list of invlaid boards and the issues we found with them
+explanation of testing thats provided
 - commadns reference all three major platforms: bash, zsh, windows
+- explain --open and --permissive flags
 
 anythig else to impress the reviewers?
+
+re
