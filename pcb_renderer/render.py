@@ -39,7 +39,11 @@ def render_board(board: Board, output_path: Path, format: str | None = None, dpi
     height = max_y - min_y
     padding = 0.1
 
-    fig, ax = plt.subplots(figsize=(max(width, 1) * 0.1 + 6, max(height, 1) * 0.1 + 6))
+    base_width_in = max(width, 1) * 0.1 + 6
+    base_height_in = max(height, 1) * 0.1 + 6
+    max_inches = 20.0
+    scale = min(1.0, max_inches / max(base_width_in, base_height_in))
+    fig, ax = plt.subplots(figsize=(base_width_in * scale, base_height_in * scale))
     ax.set_aspect("equal")
     ax.axis("off")
     ax.set_xlim(min_x - width * padding, max_x + width * padding)
