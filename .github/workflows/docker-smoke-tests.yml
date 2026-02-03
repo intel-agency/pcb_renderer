@@ -2,7 +2,7 @@ name: Platform Smoke Tests
 
 on:
   push:
-    branches: [ master, development ]
+    branches: [ master, development, nam20485 ]
   pull_request:
   workflow_dispatch:
 
