@@ -75,6 +75,7 @@ Create docker container platform smoke tests to validate basic functionality of 
 - Execute same instructions that are provided for the user from the README:
   - install/setup/usage
   - run test suite
+- add any necessary CI steps to build and run these docker containers as part of the CI pipeline
 
 ### D7 Create schema and grammar for ECAD JSON v1.0.0.0 from syntax in available boards
 
