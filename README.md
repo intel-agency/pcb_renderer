@@ -3,7 +3,7 @@
 > **Quilter Backend Engineer Code Challenge** — Parse ECAD JSON, validate board data, render to SVG/PNG/PDF.
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-20%20passed-brightgreen.svg)](#testing)
 
 A CLI tool that parses ECAD JSON board files, validates against **18 semantic rules**, and renders publication-quality SVG/PNG/PDF output using Matplotlib. Includes an optional **LLM plugin** for natural-language error explanations and design analysis.
@@ -259,4 +259,4 @@ docs/               # Architecture documentation
 
 ## 📄 License
 
-MIT License. See [LICENSE](LICENSE) for details.
+AGPL-3.0 License. See [LICENSE](LICENSE) for details.
