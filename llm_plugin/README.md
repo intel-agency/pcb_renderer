@@ -26,7 +26,7 @@ uv run llm_plugin analyze out/alpha.json
 
 ## Backend selection
 
-- `LLM_BACKEND=template` (default): deterministic template response, ideal for tests.
+- `LLM_BACKEND=template` (default): deterministic template response, ideal for tests. It **echoes the prompt** that would be sent to a real model (prefixed with `[LLM TEMPLATE]`), so you can verify inputs without an API call.
 - `LLM_BACKEND=local`: placeholder stub for future on-device models.
 - `LLM_BACKEND=http` or `openai`: uses OpenAI-compatible chat completions.
   - Set `OPENAI_API_KEY` (or `PCB_RENDERER_LLM_API_KEY` to avoid collisions with other tools).
