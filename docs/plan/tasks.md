@@ -96,9 +96,25 @@ Add CI pipeline for LLM plugin testing to ensure functionality and reliability o
 
 ### D9 Add package and deploy steps to CI pipeline
 
+## Completed Tasks
+
 ### D10 Add codeql security scanning to CI pipeline
 
-## Completed Tasks
+**Created Files:**
+- `.github/workflows/codeql.yml` - CodeQL security scanning workflow
+
+**Features:**
+- Automated security vulnerability detection using GitHub CodeQL
+- Runs on push to master/development branches
+- Runs on pull requests
+- Weekly scheduled scan (Mondays at 06:00 UTC)
+- Manual workflow dispatch available
+- Uses `security-and-quality` query suite for comprehensive analysis
+- Python language scanning with autobuild support
+
+**Configuration:**
+- Permissions: actions (read), contents (read), security-events (write)
+- Analysis results viewable in GitHub Security tab
 
 ### D4 Add golden master output comparison tests for all supplied example designs
 
