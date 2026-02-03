@@ -96,6 +96,12 @@ Add CI pipeline for LLM plugin testing to ensure functionality and reliability o
 
 ### D9 Add package and deploy steps to CI pipeline
 
+### D10 Increase test code coverage to >= 90%
+
+Test code coverage is currently around 66%.
+
+Identify missing test coverage areas and add tests to increase overall code coverage to at least 90%.
+
 ## Completed Tasks
 
 ### D10 Add codeql security scanning to CI pipeline
