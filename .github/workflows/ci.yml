@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, development ]
   pull_request:
   workflow_dispatch:
 
@@ -28,8 +28,8 @@ jobs:
       - name: Install uv
         run: pip install uv
 
-      - name: Sync dependencies
-        run: uv sync
+      - name: Sync dependencies (with dev extras)
+        run: uv sync --all-extras
 
       - name: Run tests
         run: uv run pytest --cov --cov-report=xml
@@ -37,8 +37,8 @@ jobs:
       - name: Ruff lint
         run: uv run ruff check .
 
-      - name: Pyright type check
-        run: uv run pyright
+      - name: BasedPyright type check
+        run: uv run basedpyright
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4

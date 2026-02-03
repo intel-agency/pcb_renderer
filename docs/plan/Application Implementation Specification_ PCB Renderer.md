@@ -221,7 +221,7 @@ ENTRYPOINT \["uv", "run", "pcb-render"\]
   * Used for: Fast, deterministic dependency installation and lockfile management (uv.lock).  
 * **Testing:** pytest, pytest-cov  
   * Used for: Running the test suite and ensuring 80%+ code coverage.  
-* **Linting:** ruff, pyright  
+* **Linting:** ruff, basedpyright  
   * Used for: Enforcing code style (linting) and static type checking to catch errors before runtime.
 
 ## **Project Structure**

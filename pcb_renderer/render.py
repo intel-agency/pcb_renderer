@@ -5,6 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Iterable
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from matplotlib import patheffects
@@ -13,6 +16,9 @@ from .colors import LAYER_COLORS
 from .geometry import Point, Polygon
 from .models import Board, Component, Trace, Via
 from .transform import ecad_to_svg, compute_component_transform, transform_point
+
+matplotlib.rcParams["svg.hashsalt"] = "pcb-renderer"
+matplotlib.rcParams["svg.fonttype"] = "none"
 
 
 def _board_dimensions(boundary: Polygon) -> tuple[float, float, float, float]:
