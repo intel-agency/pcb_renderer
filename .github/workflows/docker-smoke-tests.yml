@@ -20,7 +20,7 @@ jobs:
 
       - name: Build and run Alpine Linux smoke tests
         run: |
-          docker build -t pcb-renderer-test:linux-alpine -f Dockerfile.test.linux .
+          docker build -t pcb-renderer-test:linux-alpine -f docker/Dockerfile.test.linux .
           docker run --rm pcb-renderer-test:linux-alpine
 
   docker-linux-debian:
@@ -36,7 +36,7 @@ jobs:
 
       - name: Build and run Debian/Ubuntu smoke tests
         run: |
-          docker build -t pcb-renderer-test:linux-debian -f Dockerfile.test.debian .
+          docker build -t pcb-renderer-test:linux-debian -f docker/Dockerfile.test.debian .
           docker run --rm pcb-renderer-test:linux-debian
 
   docker-windows:
@@ -49,7 +49,7 @@ jobs:
 
       - name: Build and run Windows smoke tests
         run: |
-          docker build -t pcb-renderer-test:windows -f Dockerfile.test.windows .
+          docker build -t pcb-renderer-test:windows -f docker/Dockerfile.test.windows .
           docker run --rm pcb-renderer-test:windows
         shell: powershell
 

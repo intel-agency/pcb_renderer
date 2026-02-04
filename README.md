@@ -319,22 +319,20 @@ Platform smoke tests validate the application across different environments:
 
 ```bash
 # Linux (Alpine) - Docker
-docker build -t pcb-renderer-test:linux-alpine -f Dockerfile.test.linux .
+docker build -t pcb-renderer-test:linux-alpine -f docker/Dockerfile.test.linux .
 docker run --rm pcb-renderer-test:linux-alpine
 
 # Linux (Debian/Ubuntu) - Docker
-docker build -t pcb-renderer-test:linux-debian -f Dockerfile.test.debian .
+docker build -t pcb-renderer-test:linux-debian -f docker/Dockerfile.test.debian .
 docker run --rm pcb-renderer-test:linux-debian
 
 # Windows - Docker (requires Docker Desktop with Windows containers)
-docker build -t pcb-renderer-test:windows -f Dockerfile.test.windows .
+docker build -t pcb-renderer-test:windows -f docker/Dockerfile.test.windows .
 docker run --rm pcb-renderer-test:windows
 
 # macOS - Native (no Docker support)
 # Follow the Quick Start steps at the top of this README
 ```
-
-See [docs/DOCKER_TESTS.md](docs/DOCKER_TESTS.md) for details.
 
 ## Build
 
