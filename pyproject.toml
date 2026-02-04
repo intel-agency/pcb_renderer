@@ -15,7 +15,23 @@ dev = [
     "pytest>=7.4",
     "pytest-cov>=4.1",
     "ruff>=0.1",
-    "pyright>=1.1",
+    "basedpyright>=1.37.3",
+]
+llm = [
+    "openai>=1.0.0",
+    "typer>=0.9",
+    "pydantic>=2.0",
+    "python-dotenv>=1.0.0",
+]
+full = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.1",
+    "basedpyright>=1.37.3",
+    "openai>=1.0.0",
+    "typer>=0.9",
+    "pydantic>=2.0",
+    "python-dotenv>=1.0.0",
 ]
 
 [project.scripts]
@@ -29,10 +45,16 @@ build-backend = "hatchling.build"
 line-length = 100
 target-version = "py311"
 
-[tool.pyright]
+[tool.basedpyright]
 pythonVersion = "3.11"
 typeCheckingMode = "standard"
+include = ["pcb_renderer", "llm_plugin"]
 
 [tool.pytest.ini_options]
 addopts = "-q --cov --cov-report=term-missing"
 testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.14",
+]

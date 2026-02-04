@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # Alpine Linux test (lightweight)
+  test-linux-alpine:
+    build:
+      context: .
+      dockerfile: Dockerfile.test.linux
+    container_name: pcb-renderer-test-linux-alpine
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  # Debian/Ubuntu test (mainstream distro)
+  test-linux-debian:
+    build:
+      context: .
+      dockerfile: Dockerfile.test.debian
+    container_name: pcb-renderer-test-linux-debian
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  # Windows test (requires Windows containers enabled)
+  # Note: This requires Docker Desktop with Windows containers mode
+  test-windows:
+    build:
+      context: .
+      dockerfile: Dockerfile.test.windows
+    container_name: pcb-renderer-test-windows
+    platform: windows/amd64
+    environment:
+      - PYTHONUNBUFFERED=1

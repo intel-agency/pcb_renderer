@@ -1,0 +1,57 @@
+# Docker smoke test for Windows platform
+# Using Windows Server Core with Python installed
+FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS base
+
+# Install Python using official installer
+# Note: Windows containers require different handling
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+RUN Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.11.8/python-3.11.8-amd64.exe' -OutFile 'python-installer.exe'; \
+    Start-Process python-installer.exe -Wait -ArgumentList '/quiet', 'InstallAllUsers=1', 'PrependPath=1', 'Include_test=0'; \
+    Remove-Item python-installer.exe -Force
+
+WORKDIR C:\\app
+
+# Copy project files
+COPY pyproject.toml uv.lock ./
+COPY pcb_renderer ./pcb_renderer
+COPY llm_plugin ./llm_plugin
+COPY tests ./tests
+COPY boards ./boards
+COPY README.md LICENSE ./
+
+# Install uv and sync all dependencies
+RUN python -m pip install --no-cache-dir uv; \
+    uv sync --all-extras
+
+# Run smoke tests
+CMD ["powershell", "-Command", "\
+    Write-Host '=== Running Windows Docker Smoke Tests ==='; \
+    Write-Host ''; \
+    Write-Host '1. Testing basic render...'; \
+    uv run pcb-render boards/board_alpha.json -o C:\\temp\\test_alpha.svg; \
+    if ($LASTEXITCODE -ne 0) { exit 1 }; \
+    Write-Host '   ✓ Basic render successful'; \
+    Write-Host ''; \
+    Write-Host '2. Testing PNG export...'; \
+    uv run pcb-render boards/board.json -o C:\\temp\\test.png --format png --permissive; \
+    if ($LASTEXITCODE -ne 0) { exit 1 }; \
+    Write-Host '   ✓ PNG export successful'; \
+    Write-Host ''; \
+    Write-Host '3. Testing validation errors...'; \
+    uv run pcb-render boards/board_theta.json -o C:\\temp\\test_theta.svg --permissive; \
+    if ($LASTEXITCODE -ne 0) { exit 1 }; \
+    Write-Host '   ✓ Validation with permissive mode successful'; \
+    Write-Host ''; \
+    Write-Host '4. Testing export JSON...'; \
+    uv run pcb-render boards/board.json -o C:\\temp\\test.svg --export-json C:\\temp\\export.json --permissive; \
+    if ($LASTEXITCODE -ne 0) { exit 1 }; \
+    Write-Host '   ✓ Export JSON successful'; \
+    Write-Host ''; \
+    Write-Host '5. Running full test suite...'; \
+    uv run pytest --cov; \
+    if ($LASTEXITCODE -ne 0) { exit 1 }; \
+    Write-Host '   ✓ Test suite passed'; \
+    Write-Host ''; \
+    Write-Host '=== All Windows Smoke Tests Passed ===' \
+"]

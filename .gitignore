@@ -210,3 +210,7 @@ __marimo__/
 .cursor/rules/openmemory.mdc
 
 .cursor\rules\openmemory.mdc
+out/
+.cursor\rules\openmemory.mdc
+AGENTS.md
+.kilocode/
