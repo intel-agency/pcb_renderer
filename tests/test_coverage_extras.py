@@ -1,7 +1,5 @@
 """Additional coverage tests for stats, validate, and parse modules."""
 
-import pytest
-
 from pcb_renderer.errors import ErrorCode
 from pcb_renderer.geometry import Point, Polygon, Polyline
 from pcb_renderer.models import Board, Component, Net, Trace
