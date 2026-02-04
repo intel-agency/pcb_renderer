@@ -1,9 +1,9 @@
 """Tests to boost coverage to 95%+ targeting specific uncovered lines.
 
 This test file focuses on:
-1. stats.py lines 83-84 (via aspect ratio with smallest_hole>0)
-2. parse.py lines 160, 164, 169 (coordinate parsing errors)
-3. validate.py edge cases for error conditions
+1. stats.py: via aspect ratio calculation with smallest_hole > 0
+2. parse.py: coordinate parsing error conditions
+3. validate.py: edge cases for error conditions
 """
 
 from pathlib import Path
@@ -16,7 +16,7 @@ from pcb_renderer.validate import validate_board
 
 
 def test_stats_via_aspect_ratio_with_valid_vias():
-    """Test stats.py lines 83-84: via aspect ratio calculation when smallest_hole > 0.
+    """Test via aspect ratio calculation in stats.py when smallest_hole > 0.
 
     This tests the specific condition:
         if smallest_hole:
@@ -43,19 +43,19 @@ def test_stats_via_aspect_ratio_with_valid_vias():
 
 
 def test_parse_coordinates_empty_array():
-    """Test parse.py line 160: empty coordinate array raises ValueError."""
+    """Test parse.py parse_coordinates: empty coordinate array raises ValueError."""
     with pytest.raises(ValueError, match="Empty coordinate array"):
         parse_coordinates([])
 
 
 def test_parse_coordinates_odd_length_flat_array():
-    """Test parse.py line 164: odd-length flat array raises ValueError."""
+    """Test parse.py parse_coordinates: odd-length flat array raises ValueError."""
     with pytest.raises(ValueError, match="Flat coordinate list must have even length"):
         parse_coordinates([1.0, 2.0, 3.0])  # 3 elements (odd)
 
 
 def test_parse_coordinates_unrecognized_format():
-    """Test parse.py line 169: unrecognized format raises ValueError.
+    """Test parse.py parse_coordinates: unrecognized format raises ValueError.
 
     Tests the case where coordinates are neither:
     - All flat numbers: [x1, y1, x2, y2, ...]
@@ -71,7 +71,7 @@ def test_parse_coordinates_unrecognized_format():
 
 
 def test_validate_negative_trace_width():
-    """Test validate.py line 238: NEGATIVE_WIDTH error for trace.width <= 0.
+    """Test validate.py validate_board: NEGATIVE_WIDTH error for trace.width <= 0.
 
     This tests the specific condition in validate_board:
         if trace.width <= 0:
@@ -96,7 +96,7 @@ def test_validate_negative_trace_width():
 
 
 def test_validate_invalid_via_geometry():
-    """Test validate.py line 249: INVALID_VIA_GEOMETRY when hole_size >= diameter.
+    """Test validate.py validate_board: INVALID_VIA_GEOMETRY when hole_size >= diameter.
 
     This tests the specific condition:
         if via.hole_size >= via.diameter:
@@ -119,7 +119,7 @@ def test_validate_invalid_via_geometry():
 
 
 def test_validate_dangling_trace():
-    """Test validate.py line 139: DANGLING_TRACE when trace references non-existent net.
+    """Test validate.py validate_board: DANGLING_TRACE when trace references non-existent net.
 
     This tests the specific condition:
         if trace.net_name not in net_names:
@@ -143,7 +143,7 @@ def test_validate_dangling_trace():
 
 
 def test_validate_nonexistent_layer_in_trace():
-    """Test validate.py line 150: NONEXISTENT_LAYER when trace references unknown layer.
+    """Test validate.py validate_board: NONEXISTENT_LAYER when trace references unknown layer.
 
     This tests the specific condition:
         if trace.layer_hash not in layer_names:
@@ -167,7 +167,7 @@ def test_validate_nonexistent_layer_in_trace():
 
 
 def test_validate_nonexistent_net_in_via():
-    """Test validate.py line 223: NONEXISTENT_NET when via references unknown net.
+    """Test validate.py validate_board: NONEXISTENT_NET when via references unknown net.
 
     This tests the specific condition:
         if via.net_name not in net_names:

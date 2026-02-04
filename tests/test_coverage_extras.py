@@ -5,7 +5,6 @@ import pytest
 from pcb_renderer.errors import ErrorCode
 from pcb_renderer.geometry import Point, Polygon, Polyline
 from pcb_renderer.models import Board, Component, Net, Trace
-from pcb_renderer.parse import parse_coordinates
 from pcb_renderer.stats import compute_stats
 from pcb_renderer.validate import is_self_intersecting, validate_board
 
@@ -100,29 +99,3 @@ def test_validate_component_pin_reference_error():
     errors = validate_board(board)
     pin_errors = [e for e in errors if e.code == ErrorCode.INVALID_PIN_REFERENCE]
     assert len(pin_errors) > 0
-
-
-def test_parse_coordinates_empty_array():
-    """Test parse_coordinates rejects empty array."""
-    with pytest.raises(ValueError, match="Empty"):
-        parse_coordinates([])
-
-
-def test_parse_coordinates_odd_length_flat():
-    """Test parse_coordinates rejects odd-length flat arrays."""
-    with pytest.raises(ValueError, match="even"):
-        parse_coordinates([1, 2, 3])
-
-
-def test_parse_coordinates_invalid_format():
-    """Test parse_coordinates rejects invalid formats."""
-    with pytest.raises(ValueError, match="Unrecognized"):
-        parse_coordinates([{"x": 1}])
-
-
-def test_parse_coordinates_nested_pairs():
-    """Test parse_coordinates handles nested pair format."""
-    result = parse_coordinates([[1, 2], [3, 4]])
-    assert len(result) == 2
-    assert result[0].x == 1
-    assert result[1].y == 4
