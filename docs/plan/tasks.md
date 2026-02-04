@@ -83,6 +83,8 @@ Use the synatax in the available boards to create a formal schema and grammar de
 
 - Create JSON schema file (ecad_schema_v1.0.0.0.json)
 - Create grammar definition file (ecad_grammar_v1.0.0.0.txt)
+- Create a few example boards generated from the schema/grammar to validate correctness
+- Create a progression of more complex boards to demonstrate grammar features
 
 ### D8 Add CI pipeline for LLM plugin testing
 
@@ -102,7 +104,7 @@ Test code coverage is currently around 87%.
 
 Identify missing test coverage areas and add tests to increase overall code coverage to at least 95%.
 
-Q: Are the test files supposed to inclued in the coverage calculation/report? (i.e. tests/test_*.py)
+Q: Are the test files supposed to included in the coverage calculation/report? (i.e. tests/test_*.py)
   
 ### D12 Add comments to codebase to improve readability and maintainability
 

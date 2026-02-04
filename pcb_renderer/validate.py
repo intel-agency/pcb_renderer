@@ -118,7 +118,36 @@ def validate_board(board: Board) -> List[ValidationError]:
     # === BUILD REFERENCE SETS ===
     # Used for cross-referencing traces, vias, and pins against defined nets/layers
     net_names = {net.name for net in board.nets}
-    layer_names = {layer.name for layer in board.stackup.get("layers", [])}
+    # Handle both Layer objects and plain dicts for flexibility
+    layers = board.stackup.get("layers", [])
+    layer_names = set()
+    for i, layer in enumerate(layers):
+        if hasattr(layer, "name"):
+            layer_names.add(layer.name)
+        elif isinstance(layer, dict):
+            layer_name = layer.get("name")
+            if layer_name is None:
+                errors.append(
+                    ValidationError(
+                        code=ErrorCode.MALFORMED_STACKUP,
+                        severity=Severity.ERROR,
+                        message=f"Layer at index {i} missing required 'name' field",
+                        json_path=f"$.stackup.layers[{i}]",
+                        context={"layer_index": i},
+                    )
+                )
+            else:
+                layer_names.add(layer_name)
+        else:
+            errors.append(
+                ValidationError(
+                    code=ErrorCode.MALFORMED_STACKUP,
+                    severity=Severity.ERROR,
+                    message=f"Layer at index {i} is not a valid Layer object or dict",
+                    json_path=f"$.stackup.layers[{i}]",
+                    context={"layer_index": i, "type": type(layer).__name__},
+                )
+            )
 
     # === TRACE VALIDATION ===
     # Task 3: Traces - validate paths, net refs, layer refs, widths
@@ -292,7 +321,30 @@ def validate_board(board: Board) -> List[ValidationError]:
             )
         )
     else:
-        indices = sorted(layer.index for layer in board.stackup.get("layers", []))
+        # Handle both Layer objects and plain dicts for flexibility
+        layers = board.stackup.get("layers", [])
+        indices = []
+        for i, layer in enumerate(layers):
+            if hasattr(layer, "index"):
+                indices.append(layer.index)
+            elif isinstance(layer, dict):
+                layer_index = layer.get("index")
+                if layer_index is None:
+                    errors.append(
+                        ValidationError(
+                            code=ErrorCode.MALFORMED_STACKUP,
+                            severity=Severity.ERROR,
+                            message=f"Layer at index {i} missing required 'index' field",
+                            json_path=f"$.stackup.layers[{i}]",
+                            context={"layer_index": i},
+                        )
+                    )
+                else:
+                    indices.append(layer_index)
+            else:
+                # Already reported in layer_names validation above
+                pass
+        indices = sorted(indices)
         # Layer indices must be contiguous (no gaps)
         if indices != list(range(indices[0], indices[0] + len(indices))):
             errors.append(

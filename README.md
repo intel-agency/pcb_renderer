@@ -4,7 +4,7 @@
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-21%20passed-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-161%20passed-brightgreen.svg)](#testing)
 
 A CLI tool that parses ECAD JSON board files, validates against **18 semantic rules**, and renders publication-quality SVG/PNG/PDF output using Matplotlib. Includes an optional **LLM plugin** for natural-language error explanations and design analysis.
 
@@ -22,12 +22,35 @@ cd pcb-renderer
 # Install all dependencies (Python 3.11+ required)
 uv sync --all-extras
 
-# Render a sample board and open it
+# Render a valid board and open it
 uv run pcb-render boards/board_alpha.json -o out/board.svg --open
+
+# Try rendering an invalid board (will fail with validation errors)
+uv run pcb-render boards/board_theta.json -o out/theta.svg
+
+# Render an invalid board (demonstrates error detection)
+uv run pcb-render boards/board_theta.json -o out/theta.svg --permissive
 
 # Run the test suite
 uv run pytest --cov
 ```
+
+---
+
+## 🔍 Quick Review: Interesting Items
+
+Key source files for code review:
+
+| File | Purpose | Description |
+| --- | --- | --- |
+| [parse.py](pcb_renderer/parse.py) | JSON parsing | Normalizes units (MICRON/MILLIMETER → mm), handles flexible coordinate formats |
+| [validate.py](pcb_renderer/validate.py) | Validation rules | Implements all 18 semantic validation rules with structured error reporting |
+| [models.py](pcb_renderer/models.py) | Data models | Pydantic models for Board, Component, Trace, Via, Net, Layer, etc. |
+| [transform.py](pcb_renderer/transform.py) | Coordinate transforms | ECAD Y-up ↔ SVG Y-down conversions, component rotation math |
+| [render.py](pcb_renderer/render.py) | Rendering engine | Matplotlib-based headless rendering with deterministic SVG output |
+| [geometry.py](pcb_renderer/geometry.py) | Math primitives | Point, Polygon, Polyline, Circle classes with geometry operations |
+| [errors.py](pcb_renderer/errors.py) | Error system | ErrorCode enum (18 codes), ValidationError dataclass, Severity levels |
+| [cli.py](pcb_renderer/cli.py) | Main entry point | Argument parsing, pipeline orchestration, LLM plugin integration |
 
 ---
 
@@ -47,7 +70,7 @@ This project was built to satisfy the **Quilter Backend Engineer Code Challenge*
 | **Keepout Regions** | Draws keepouts with distinct hatched pattern | See [test_circle_keepouts.py](tests/test_circle_keepouts.py) |
 | **Error Detection** | **Returns validation errors for all 14+ invalid boards** (see table below) | [test_validate.py](tests/test_validate.py) validates all error codes |
 | **Output Formats** | Renders as SVG (default), PNG, PDF | `--format` flag supports all three |
-| **Code Quality** | 21 test files, ~76% coverage, type checking, linting | `uv run pytest --cov` |
+| **Code Quality** | 16 test files (161 tests), ~76% coverage, type checking, linting | `uv run pytest --cov` |
 | **Unit Testing** | Comprehensive test suite with golden master comparisons | [tests/](tests/) directory |
 | **Code Comments** | Docstrings, inline comments, architecture docs | Throughout codebase + [AGENTS.md](AGENTS.md) |
 | **LLM Usage** | Optional LLM plugin for natural-language error explanations | [llm_plugin/](llm_plugin/) with OpenAI integration |
@@ -81,6 +104,9 @@ All **14 intentionally malformed boards** from the challenge are correctly detec
 Verify the implementation in < 5 minutes:
 
 ```bash
+# Install dependencies first
+uv sync --all-extras
+
 # 1. Render a valid board
 uv run pcb-render boards/board_alpha.json -o out/alpha.svg --open
 
@@ -321,7 +347,7 @@ cp .env.example .env  # Optional: configure uv build backend
 uv build --force-pep517
 ```
 
-**Test coverage:** 21 tests, ~76% line coverage
+**Test coverage:** 161 tests across 16 test files, ~76% line coverage
 
 | Test File | Coverage |
 | --- | --- |
