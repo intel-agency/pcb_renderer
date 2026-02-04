@@ -72,7 +72,7 @@ uv run basedpyright
 ### Build
 
 ```bash
-# Build wheel and sdist (requires UV_NO_BUILD_OPTIMIZATION=true in .env)
+# Build wheel and sdist (.env configured for PEP 517)
 uv build --force-pep517
 ```
 

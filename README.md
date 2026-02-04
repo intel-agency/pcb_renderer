@@ -340,10 +340,7 @@ See [docs/DOCKER_TESTS.md](docs/DOCKER_TESTS.md) for details.
 
 ```bash
 # Build a wheel and sdist with uv
-# Note: Project uses Hatchling backend with flat layout
-# Copy .env.example to .env (sets UV_NO_BUILD_OPTIMIZATION=true)
-# or use --force-pep517 flag to bypass uv's internal build optimization
-cp .env.example .env  # Optional: configure uv build backend
+# Note: .env is configured to use PEP 517 build backend (required for Hatchling flat layout)
 uv build --force-pep517
 ```
 
