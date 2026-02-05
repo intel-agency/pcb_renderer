@@ -1,0 +1,845 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ecad_schema_v1.0.0.0.strict.json",
+  "title": "ECAD JSON Schema v1.0.0 (strict)",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "metadata",
+    "stackup",
+    "nets",
+    "components",
+    "traces",
+    "vias"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "boundary": {
+      "$ref": "#/$defs/polygon"
+    },
+    "stackup": {
+      "$ref": "#/$defs/stackup"
+    },
+    "nets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/net"
+      }
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/component"
+      }
+    },
+    "traces": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/trace"
+      }
+    },
+    "vias": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/via"
+      }
+    },
+    "pours": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/pour"
+      }
+    },
+    "keepouts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/keepout"
+      }
+    },
+    "rule_list": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "drill_data": {
+      "$ref": "#/$defs/drillData"
+    },
+    "DRC_list": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "schematics": {
+      "$ref": "#/$defs/schematics"
+    },
+    "placement_regions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/placementRegion"
+      }
+    },
+    "net_ties": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/netTie"
+      }
+    },
+    "net_settings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "ground_net_name": {
+      "type": "string"
+    },
+    "custom_plane_net_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "schem_uid_to_board_uid": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "schem_uid_to_component_name": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "comps_with_schematics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "comps_without_schematics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "required": [
+        "name",
+        "source",
+        "designUnits"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "designUnits": {
+          "type": "string",
+          "enum": [
+            "MICRON",
+            "MILLIMETER"
+          ]
+        },
+        "creationDate": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": true
+    },
+    "coordinatePair": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "coordinatePairs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/coordinatePair"
+      },
+      "minItems": 2
+    },
+    "coordinateFlat": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 4
+    },
+    "coordinateList": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/coordinatePairs"
+        },
+        {
+          "$ref": "#/$defs/coordinateFlat"
+        }
+      ]
+    },
+    "polygon": {
+      "type": "object",
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "properties": {
+        "type": {
+          "const": "polygon"
+        },
+        "coordinates": {
+          "$ref": "#/$defs/coordinateList"
+        }
+      },
+      "additionalProperties": false
+    },
+    "lineString": {
+      "type": "object",
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "properties": {
+        "type": {
+          "const": "LineString"
+        },
+        "coordinates": {
+          "$ref": "#/$defs/coordinateList"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rectangle": {
+      "type": "object",
+      "required": [
+        "type",
+        "width",
+        "height",
+        "center"
+      ],
+      "properties": {
+        "type": {
+          "const": "rectangle"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "center": {
+          "$ref": "#/$defs/coordinatePair"
+        }
+      },
+      "additionalProperties": false
+    },
+    "circle": {
+      "type": "object",
+      "required": [
+        "type",
+        "center",
+        "radius"
+      ],
+      "properties": {
+        "type": {
+          "const": "circle"
+        },
+        "center": {
+          "$ref": "#/$defs/coordinatePair"
+        },
+        "radius": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "layer": {
+      "type": "object",
+      "required": [
+        "name",
+        "layer_type",
+        "index",
+        "material"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "layer_type": {
+          "type": "string",
+          "enum": [
+            "TOP",
+            "BOTTOM",
+            "MID",
+            "PLANE",
+            "DIELECTRIC"
+          ]
+        },
+        "index": {
+          "type": "integer"
+        },
+        "material": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "stackup": {
+      "type": "object",
+      "required": [
+        "layers"
+      ],
+      "properties": {
+        "layers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/layer"
+          }
+        },
+        "totalThickness": {
+          "type": "number"
+        },
+        "surfaceFinish": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "net": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "transform": {
+      "type": "object",
+      "required": [
+        "position"
+      ],
+      "properties": {
+        "position": {
+          "$ref": "#/$defs/coordinatePair"
+        },
+        "rotation": {
+          "type": "number"
+        },
+        "side": {
+          "type": "string",
+          "enum": [
+            "FRONT",
+            "BACK"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "pin": {
+      "type": "object",
+      "required": [
+        "name",
+        "comp_name",
+        "net_name",
+        "shape",
+        "position"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "comp_name": {
+          "type": "string"
+        },
+        "net_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shape": {
+          "$ref": "#/$defs/rectangle"
+        },
+        "position": {
+          "$ref": "#/$defs/coordinatePair"
+        },
+        "rotation": {
+          "type": "number"
+        },
+        "is_throughhole": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "component": {
+      "type": "object",
+      "required": [
+        "name",
+        "reference",
+        "footprint",
+        "outline",
+        "transform",
+        "pins"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        },
+        "footprint": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "outline": {
+          "$ref": "#/$defs/rectangle"
+        },
+        "transform": {
+          "$ref": "#/$defs/transform"
+        },
+        "pins": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/pin"
+          }
+        },
+        "keepouts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/componentKeepout"
+          }
+        },
+        "user_preplaced": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "componentKeepout": {
+      "type": "object",
+      "required": [
+        "name",
+        "shape",
+        "layer",
+        "keepout_type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "shape": {
+          "$ref": "#/$defs/rectangle"
+        },
+        "layer": {
+          "type": "string"
+        },
+        "keepout_type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "trace": {
+      "type": "object",
+      "required": [
+        "uid",
+        "net_name",
+        "layer_hash",
+        "path",
+        "width"
+      ],
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "net_name": {
+          "type": "string"
+        },
+        "layer_hash": {
+          "type": "string"
+        },
+        "path": {
+          "$ref": "#/$defs/lineString"
+        },
+        "width": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "via": {
+      "type": "object",
+      "required": [
+        "uid",
+        "net_name",
+        "center",
+        "diameter",
+        "hole_size",
+        "span"
+      ],
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "net_name": {
+          "type": "string"
+        },
+        "center": {
+          "$ref": "#/$defs/coordinatePair"
+        },
+        "diameter": {
+          "type": "number"
+        },
+        "hole_size": {
+          "type": "number"
+        },
+        "span": {
+          "$ref": "#/$defs/viaSpan"
+        }
+      },
+      "additionalProperties": false
+    },
+    "viaSpan": {
+      "type": "object",
+      "required": [
+        "start_layer",
+        "end_layer"
+      ],
+      "properties": {
+        "start_layer": {
+          "type": "string"
+        },
+        "end_layer": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "pour": {
+      "type": "object",
+      "required": [
+        "uid",
+        "name",
+        "net_name",
+        "layer_hash",
+        "boundary"
+      ],
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "net_name": {
+          "type": "string"
+        },
+        "layer_hash": {
+          "type": "string"
+        },
+        "boundary": {
+          "$ref": "#/$defs/polygon"
+        },
+        "clearance": {
+          "type": "number"
+        },
+        "cross_cutout": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "keepout": {
+      "type": "object",
+      "required": [
+        "uid",
+        "name",
+        "layer",
+        "shape",
+        "keepout_type"
+      ],
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "layer": {
+          "type": "string"
+        },
+        "shape": {
+          "$ref": "#/$defs/keepoutShape"
+        },
+        "keepout_type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "keepoutShape": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/circle"
+        },
+        {
+          "$ref": "#/$defs/polygon"
+        }
+      ]
+    },
+    "placementRegion": {
+      "type": "object",
+      "required": [
+        "name",
+        "layer",
+        "shape",
+        "allowed_components",
+        "region_type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "layer": {
+          "type": "string"
+        },
+        "shape": {
+          "$ref": "#/$defs/polygon"
+        },
+        "allowed_components": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "region_type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "netTie": {
+      "type": "object",
+      "required": [
+        "comp_name",
+        "tie_pin",
+        "net_pins",
+        "layer"
+      ],
+      "properties": {
+        "comp_name": {
+          "type": "string"
+        },
+        "tie_pin": {
+          "type": "string"
+        },
+        "net_pins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "layer": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "drillData": {
+      "type": "object",
+      "properties": {
+        "drill_spans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/drillSpan"
+          }
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/drillTool"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "drillSpan": {
+      "type": "object",
+      "required": [
+        "name",
+        "start_layer",
+        "end_layer",
+        "plated"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "start_layer": {
+          "type": "string"
+        },
+        "end_layer": {
+          "type": "string"
+        },
+        "plated": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "drillTool": {
+      "type": "object",
+      "required": [
+        "size",
+        "type",
+        "plated"
+      ],
+      "properties": {
+        "size": {
+          "type": "number"
+        },
+        "type": {
+          "type": "string"
+        },
+        "plated": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schematics": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "sheets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/schematicSheet"
+          }
+        },
+        "symbols": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/schematicSymbol"
+          }
+        },
+        "wires": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/schematicWire"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "schematicSheet": {
+      "type": "object",
+      "required": [
+        "uid",
+        "name",
+        "path",
+        "page_number"
+      ],
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "page_number": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schematicSymbol": {
+      "type": "object",
+      "required": [
+        "uid",
+        "reference",
+        "sheet",
+        "position",
+        "lib_name"
+      ],
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        },
+        "sheet": {
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/coordinatePair"
+        },
+        "lib_name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schematicWire": {
+      "type": "object",
+      "required": [
+        "uid",
+        "net_name",
+        "sheet",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "net_name": {
+          "type": "string"
+        },
+        "sheet": {
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/$defs/coordinatePair"
+        },
+        "end": {
+          "$ref": "#/$defs/coordinatePair"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,386 @@
+{
+  "schemaVersion": "1.0.0",
+  "metadata": {
+    "name": "Generated_Complex_Board",
+    "source": "SchemaExample",
+    "designUnits": "MICRON",
+    "creationDate": "2026-02-04T00:00:00Z"
+  },
+  "boundary": {
+    "type": "polygon",
+    "coordinates": [
+      0,
+      0,
+      80000,
+      0,
+      80000,
+      50000,
+      0,
+      50000,
+      0,
+      0
+    ]
+  },
+  "stackup": {
+    "layers": [
+      {
+        "name": "TOP",
+        "layer_type": "TOP",
+        "index": 0,
+        "material": {
+          "type": "COPPER",
+          "thickness": 35
+        }
+      },
+      {
+        "name": "DIELECTRIC_1",
+        "layer_type": "DIELECTRIC",
+        "index": 1,
+        "material": {
+          "type": "FR4",
+          "thickness": 200
+        }
+      },
+      {
+        "name": "MID",
+        "layer_type": "MID",
+        "index": 2,
+        "material": {
+          "type": "COPPER",
+          "thickness": 18
+        }
+      },
+      {
+        "name": "DIELECTRIC_2",
+        "layer_type": "DIELECTRIC",
+        "index": 3,
+        "material": {
+          "type": "FR4",
+          "thickness": 600
+        }
+      },
+      {
+        "name": "BOTTOM",
+        "layer_type": "BOTTOM",
+        "index": 4,
+        "material": {
+          "type": "COPPER",
+          "thickness": 35
+        }
+      }
+    ],
+    "totalThickness": 888,
+    "surfaceFinish": "ENIG"
+  },
+  "nets": [
+    {
+      "name": "GND",
+      "class": "POWER"
+    },
+    {
+      "name": "VCC",
+      "class": "POWER"
+    },
+    {
+      "name": "CLK",
+      "class": "SIGNAL"
+    }
+  ],
+  "components": {
+    "U1": {
+      "name": "U1",
+      "reference": "U1",
+      "footprint": "QFP48",
+      "outline": {
+        "type": "rectangle",
+        "width": 9000,
+        "height": 9000,
+        "center": [
+          0,
+          0
+        ]
+      },
+      "transform": {
+        "position": [
+          40000,
+          30000
+        ],
+        "rotation": 0,
+        "side": "FRONT"
+      },
+      "pins": {
+        "1": {
+          "name": "1",
+          "comp_name": "U1",
+          "net_name": "CLK",
+          "shape": {
+            "type": "rectangle",
+            "width": 600,
+            "height": 250
+          },
+          "position": [
+            -4800,
+            -2750
+          ],
+          "rotation": 0,
+          "is_throughhole": false
+        },
+        "2": {
+          "name": "2",
+          "comp_name": "U1",
+          "net_name": "GND",
+          "shape": {
+            "type": "rectangle",
+            "width": 600,
+            "height": 250
+          },
+          "position": [
+            -4800,
+            -2250
+          ],
+          "rotation": 0,
+          "is_throughhole": false
+        }
+      },
+      "keepouts": {
+        "body_keepout": {
+          "name": "body_keepout",
+          "shape": {
+            "type": "rectangle",
+            "width": 8000,
+            "height": 8000,
+            "center": [
+              0,
+              0
+            ]
+          },
+          "layer": "ALL",
+          "keepout_type": "COMPONENT"
+        }
+      },
+      "user_preplaced": true
+    }
+  },
+  "traces": {
+    "trace_clk": {
+      "uid": "trace_clk",
+      "net_name": "CLK",
+      "layer_hash": "TOP",
+      "path": {
+        "type": "LineString",
+        "coordinates": [
+          35000,
+          30000,
+          25000,
+          30000,
+          25000,
+          20000
+        ]
+      },
+      "width": 120
+    }
+  },
+  "vias": {
+    "via_clk": {
+      "uid": "via_clk",
+      "net_name": "CLK",
+      "center": [
+        25000,
+        20000
+      ],
+      "diameter": 500,
+      "hole_size": 250,
+      "span": {
+        "start_layer": "TOP",
+        "end_layer": "BOTTOM"
+      }
+    }
+  },
+  "pours": {
+    "pour_gnd": {
+      "uid": "pour_gnd",
+      "name": "GND_POUR",
+      "net_name": "GND",
+      "layer_hash": "MID",
+      "boundary": {
+        "type": "polygon",
+        "coordinates": [
+          [
+            5000,
+            5000
+          ],
+          [
+            75000,
+            5000
+          ],
+          [
+            75000,
+            45000
+          ],
+          [
+            5000,
+            45000
+          ],
+          [
+            5000,
+            5000
+          ]
+        ]
+      },
+      "clearance": 200,
+      "cross_cutout": true
+    }
+  },
+  "keepouts": [
+    {
+      "uid": "keepout_mount",
+      "name": "MOUNTING_HOLE",
+      "layer": "ALL",
+      "shape": {
+        "type": "circle",
+        "center": [
+          70000,
+          40000
+        ],
+        "radius": 2000
+      },
+      "keepout_type": "ALL"
+    }
+  ],
+  "placement_regions": [
+    {
+      "name": "MCU_REGION",
+      "layer": "TOP",
+      "shape": {
+        "type": "polygon",
+        "coordinates": [
+          [
+            30000,
+            20000
+          ],
+          [
+            50000,
+            20000
+          ],
+          [
+            50000,
+            40000
+          ],
+          [
+            30000,
+            40000
+          ],
+          [
+            30000,
+            20000
+          ]
+        ]
+      },
+      "allowed_components": [
+        "U1"
+      ],
+      "region_type": "PLACEMENT"
+    }
+  ],
+  "rule_list": {
+    "default_trace_rule": {
+      "width": 120
+    },
+    "default_via_rule": {
+      "diameter": 500,
+      "hole_size": 250
+    }
+  },
+  "drill_data": {
+    "drill_spans": [
+      {
+        "name": "THRU",
+        "start_layer": "TOP",
+        "end_layer": "BOTTOM",
+        "plated": true
+      }
+    ],
+    "tools": [
+      {
+        "size": 250,
+        "type": "DRILL",
+        "plated": true
+      }
+    ]
+  },
+  "DRC_list": {
+    "clearance_rules": {
+      "default_clearance": 150
+    }
+  },
+  "schematics": {
+    "name": "Generated_Schematic",
+    "sheets": [
+      {
+        "uid": "sheet_main",
+        "name": "Main",
+        "path": "/Main",
+        "page_number": 1
+      }
+    ],
+    "symbols": [
+      {
+        "uid": "sym_U1",
+        "reference": "U1",
+        "sheet": "/Main",
+        "position": [
+          1000,
+          2000
+        ],
+        "lib_name": "MCU:MCU_Generic"
+      }
+    ],
+    "wires": [
+      {
+        "uid": "wire_clk",
+        "net_name": "CLK",
+        "sheet": "/Main",
+        "start": [
+          1200,
+          2000
+        ],
+        "end": [
+          2500,
+          2000
+        ]
+      }
+    ]
+  },
+  "net_settings": {
+    "All Nets": [
+      "GND",
+      "VCC",
+      "CLK"
+    ]
+  },
+  "net_ties": [
+    {
+      "comp_name": "NT1",
+      "tie_pin": "1",
+      "net_pins": [
+        "2"
+      ],
+      "layer": "TOP"
+    }
+  ],
+  "ground_net_name": "GND",
+  "custom_plane_net_names": [
+    "GND",
+    "VCC"
+  ],
+  "schem_uid_to_board_uid": {
+    "sym_U1": "U1"
+  },
+  "schem_uid_to_component_name": {
+    "sym_U1": "U1"
+  },
+  "comps_with_schematics": [
+    "U1"
+  ],
+  "comps_without_schematics": []
+}

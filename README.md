@@ -306,6 +306,9 @@ See [llm_plugin/README.md](llm_plugin/README.md) for full details.
 # Run all tests with coverage
 uv run pytest --cov
 
+# Validate ECAD JSON schemas (all boards permissive, generated boards strict)
+uv run python scripts/validate_schema.py
+
 # Linting
 uv run ruff check .
 

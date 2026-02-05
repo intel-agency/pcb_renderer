@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "1.0.0",
+  "metadata": {
+    "name": "Generated_Minimal_Board",
+    "source": "SchemaExample",
+    "designUnits": "MICRON",
+    "creationDate": "2026-02-04T00:00:00Z"
+  },
+  "boundary": {
+    "type": "polygon",
+    "coordinates": [
+      [
+        0,
+        0
+      ],
+      [
+        50000,
+        0
+      ],
+      [
+        50000,
+        30000
+      ],
+      [
+        0,
+        30000
+      ],
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  "stackup": {
+    "layers": [
+      {
+        "name": "TOP",
+        "layer_type": "TOP",
+        "index": 0,
+        "material": {
+          "type": "COPPER",
+          "thickness": 35
+        }
+      },
+      {
+        "name": "DIELECTRIC",
+        "layer_type": "DIELECTRIC",
+        "index": 1,
+        "material": {
+          "type": "FR4",
+          "thickness": 1000
+        }
+      },
+      {
+        "name": "BOTTOM",
+        "layer_type": "BOTTOM",
+        "index": 2,
+        "material": {
+          "type": "COPPER",
+          "thickness": 35
+        }
+      }
+    ],
+    "totalThickness": 1070
+  },
+  "nets": [
+    {
+      "name": "GND",
+      "class": "POWER"
+    }
+  ],
+  "components": {
+    "R1": {
+      "name": "R1",
+      "reference": "R1",
+      "footprint": "RES_0603",
+      "outline": {
+        "type": "rectangle",
+        "width": 1600,
+        "height": 800,
+        "center": [
+          0,
+          0
+        ]
+      },
+      "transform": {
+        "position": [
+          25000,
+          15000
+        ],
+        "rotation": 0,
+        "side": "FRONT"
+      },
+      "pins": {
+        "1": {
+          "name": "1",
+          "comp_name": "R1",
+          "net_name": "GND",
+          "shape": {
+            "type": "rectangle",
+            "width": 350,
+            "height": 600
+          },
+          "position": [
+            -550,
+            0
+          ],
+          "rotation": 0,
+          "is_throughhole": false
+        },
+        "2": {
+          "name": "2",
+          "comp_name": "R1",
+          "net_name": "GND",
+          "shape": {
+            "type": "rectangle",
+            "width": 350,
+            "height": 600
+          },
+          "position": [
+            550,
+            0
+          ],
+          "rotation": 0,
+          "is_throughhole": false
+        }
+      },
+      "user_preplaced": true
+    }
+  },
+  "traces": {},
+  "vias": {},
+  "pours": {},
+  "keepouts": []
+}

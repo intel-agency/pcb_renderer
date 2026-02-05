@@ -77,15 +77,6 @@ Create docker container platform smoke tests to validate basic functionality of 
   - run test suite
 - add any necessary CI steps to build and run these docker containers as part of the CI pipeline
 
-### D7 Create schema and grammar for ECAD JSON v1.0.0.0 from syntax in available boards
-
-Use the synatax in the available boards to create a formal schema and grammar definition for ECAD JSON v1.0.0.0
-
-- Create JSON schema file (ecad_schema_v1.0.0.0.json)
-- Create grammar definition file (ecad_grammar_v1.0.0.0.txt)
-- Create a few example boards generated from the schema/grammar to validate correctness
-- Create a progression of more complex boards to demonstrate grammar features
-
 ### D8 Add CI pipeline for LLM plugin testing
 
 Add CI pipeline for LLM plugin testing to ensure functionality and reliability of the LLM plugin component.
@@ -123,6 +114,15 @@ Esp. focus on the parse, validate, and render modules.
 - Add comments that address all items mentioned in the <docs/input/Quilter Backend Engineer Code Challenge 1-27.md> challenge interview doc where relevant.
 
 ## Completed Tasks
+
+### D7 Create schema and grammar for ECAD JSON v1.0.0.0 from syntax in available boards
+
+**Changes Made:**
+
+- Added permissive and strict JSON Schemas in `docs/schema/` (Draft 2020-12) derived from existing board syntax
+- Added permissive and strict EBNF grammar definitions in `docs/schema/`
+- Added generated example boards under `boards/generated/` (minimal → intermediate → complex)
+- Documented schema/grammar usage in `docs/schema/README.md`
 
 ### D13 More README improvements
 

@@ -1,0 +1,331 @@
+ECAD JSON v1.0.0 (permissive) — EBNF
+====================================
+
+Notes:
+- JSON object member order is not significant.
+- This grammar is permissive: it allows extension fields at most object levels.
+- Numeric units follow metadata.designUnits (MICRON or MILLIMETER).
+
+board = object-start, ws, board-member, { ws, ",", ws, board-member }, ws, object-end;
+
+board-member = schemaVersion-member
+             | metadata-member
+             | boundary-member
+             | stackup-member
+             | nets-member
+             | components-member
+             | traces-member
+             | vias-member
+             | pours-member
+             | keepouts-member
+             | rule-list-member
+             | drill-data-member
+             | drc-list-member
+             | schematics-member
+             | placement-regions-member
+             | net-ties-member
+             | net-settings-member
+             | ground-net-name-member
+             | custom-plane-net-names-member
+             | schem-uid-to-board-uid-member
+             | schem-uid-to-component-name-member
+             | comps-with-schematics-member
+             | comps-without-schematics-member
+             | extension-field;
+
+schemaVersion-member = string("schemaVersion"), ws, ":", ws, string("1.0.0");
+metadata-member = string("metadata"), ws, ":", ws, metadata;
+boundary-member = string("boundary"), ws, ":", ws, polygon;
+stackup-member = string("stackup"), ws, ":", ws, stackup;
+nets-member = string("nets"), ws, ":", ws, net-list;
+components-member = string("components"), ws, ":", ws, component-map;
+traces-member = string("traces"), ws, ":", ws, trace-map;
+vias-member = string("vias"), ws, ":", ws, via-map;
+pours-member = string("pours"), ws, ":", ws, pour-map;
+keepouts-member = string("keepouts"), ws, ":", ws, keepout-list;
+rule-list-member = string("rule_list"), ws, ":", ws, json-object;
+drill-data-member = string("drill_data"), ws, ":", ws, drill-data;
+drc-list-member = string("DRC_list"), ws, ":", ws, json-object;
+schematics-member = string("schematics"), ws, ":", ws, schematics;
+placement-regions-member = string("placement_regions"), ws, ":", ws, placement-region-list;
+net-ties-member = string("net_ties"), ws, ":", ws, net-tie-list;
+net-settings-member = string("net_settings"), ws, ":", ws, net-settings;
+ground-net-name-member = string("ground_net_name"), ws, ":", ws, json-string;
+custom-plane-net-names-member = string("custom_plane_net_names"), ws, ":", ws, string-list;
+schem-uid-to-board-uid-member = string("schem_uid_to_board_uid"), ws, ":", ws, string-map;
+schem-uid-to-component-name-member = string("schem_uid_to_component_name"), ws, ":", ws, string-map;
+comps-with-schematics-member = string("comps_with_schematics"), ws, ":", ws, string-list;
+comps-without-schematics-member = string("comps_without_schematics"), ws, ":", ws, string-list;
+
+metadata = object-start, ws,
+           string("name"), ws, ":", ws, json-string,
+           ws, ",", ws, string("source"), ws, ":", ws, json-string,
+           ws, ",", ws, string("designUnits"), ws, ":", ws, design-units,
+           { ws, ",", ws, extension-field },
+           ws, object-end;
+
+design-units = string("MICRON") | string("MILLIMETER");
+
+stackup = object-start, ws,
+          string("layers"), ws, ":", ws, layer-list,
+          [ ws, ",", ws, string("totalThickness"), ws, ":", ws, json-number ],
+          [ ws, ",", ws, string("surfaceFinish"), ws, ":", ws, json-string ],
+          { ws, ",", ws, extension-field },
+          ws, object-end;
+
+layer-list = array-start, ws, layer, { ws, ",", ws, layer }, ws, array-end;
+layer = object-start, ws,
+        string("name"), ws, ":", ws, json-string,
+        ws, ",", ws, string("layer_type"), ws, ":", ws, layer-type,
+        ws, ",", ws, string("index"), ws, ":", ws, json-number,
+        ws, ",", ws, string("material"), ws, ":", ws, json-object,
+        { ws, ",", ws, extension-field },
+        ws, object-end;
+
+layer-type = string("TOP") | string("BOTTOM") | string("MID") | string("PLANE") | string("DIELECTRIC");
+
+net-list = array-start, ws, net, { ws, ",", ws, net }, ws, array-end;
+net = object-start, ws,
+      string("name"), ws, ":", ws, json-string,
+      [ ws, ",", ws, string("class"), ws, ":", ws, json-string ],
+      { ws, ",", ws, extension-field },
+      ws, object-end;
+
+component-map = object-start, ws, [ component-entry, { ws, ",", ws, component-entry } ], ws, object-end;
+component-entry = json-string, ws, ":", ws, component;
+component = object-start, ws,
+            string("name"), ws, ":", ws, json-string,
+            ws, ",", ws, string("reference"), ws, ":", ws, json-string,
+            ws, ",", ws, string("footprint"), ws, ":", ws, json-string,
+            ws, ",", ws, string("outline"), ws, ":", ws, rectangle,
+            ws, ",", ws, string("transform"), ws, ":", ws, transform,
+            ws, ",", ws, string("pins"), ws, ":", ws, pin-map,
+            [ ws, ",", ws, string("display_name"), ws, ":", ws, json-string ],
+            [ ws, ",", ws, string("keepouts"), ws, ":", ws, component-keepout-map ],
+            [ ws, ",", ws, string("user_preplaced"), ws, ":", ws, json-boolean ],
+            { ws, ",", ws, extension-field },
+            ws, object-end;
+
+transform = object-start, ws,
+            string("position"), ws, ":", ws, coordinate-pair,
+            [ ws, ",", ws, string("rotation"), ws, ":", ws, json-number ],
+            [ ws, ",", ws, string("side"), ws, ":", ws, (string("FRONT") | string("BACK")) ],
+            { ws, ",", ws, extension-field },
+            ws, object-end;
+
+pin-map = object-start, ws, [ pin-entry, { ws, ",", ws, pin-entry } ], ws, object-end;
+pin-entry = json-string, ws, ":", ws, pin;
+pin = object-start, ws,
+      string("name"), ws, ":", ws, json-string,
+      ws, ",", ws, string("comp_name"), ws, ":", ws, json-string,
+      ws, ",", ws, string("net_name"), ws, ":", ws, json-string,
+      ws, ",", ws, string("shape"), ws, ":", ws, rectangle,
+      ws, ",", ws, string("position"), ws, ":", ws, coordinate-pair,
+      [ ws, ",", ws, string("rotation"), ws, ":", ws, json-number ],
+      [ ws, ",", ws, string("is_throughhole"), ws, ":", ws, json-boolean ],
+      { ws, ",", ws, extension-field },
+      ws, object-end;
+
+component-keepout-map = object-start, ws, [ component-keepout-entry, { ws, ",", ws, component-keepout-entry } ], ws, object-end;
+component-keepout-entry = json-string, ws, ":", ws, component-keepout;
+component-keepout = object-start, ws,
+                    string("name"), ws, ":", ws, json-string,
+                    ws, ",", ws, string("shape"), ws, ":", ws, rectangle,
+                    ws, ",", ws, string("layer"), ws, ":", ws, json-string,
+                    ws, ",", ws, string("keepout_type"), ws, ":", ws, json-string,
+                    { ws, ",", ws, extension-field },
+                    ws, object-end;
+
+trace-map = object-start, ws, [ trace-entry, { ws, ",", ws, trace-entry } ], ws, object-end;
+trace-entry = json-string, ws, ":", ws, trace;
+trace = object-start, ws,
+        string("uid"), ws, ":", ws, json-string,
+        ws, ",", ws, string("net_name"), ws, ":", ws, json-string,
+        ws, ",", ws, string("layer_hash"), ws, ":", ws, json-string,
+        ws, ",", ws, string("path"), ws, ":", ws, line-string,
+        ws, ",", ws, string("width"), ws, ":", ws, json-number,
+        { ws, ",", ws, extension-field },
+        ws, object-end;
+
+via-map = object-start, ws, [ via-entry, { ws, ",", ws, via-entry } ], ws, object-end;
+via-entry = json-string, ws, ":", ws, via;
+via = object-start, ws,
+      string("uid"), ws, ":", ws, json-string,
+      ws, ",", ws, string("net_name"), ws, ":", ws, json-string,
+      ws, ",", ws, string("center"), ws, ":", ws, coordinate-pair,
+      ws, ",", ws, string("diameter"), ws, ":", ws, json-number,
+      ws, ",", ws, string("hole_size"), ws, ":", ws, json-number,
+      ws, ",", ws, string("span"), ws, ":", ws, via-span,
+      { ws, ",", ws, extension-field },
+      ws, object-end;
+
+via-span = object-start, ws,
+           string("start_layer"), ws, ":", ws, json-string,
+           ws, ",", ws, string("end_layer"), ws, ":", ws, json-string,
+           { ws, ",", ws, extension-field },
+           ws, object-end;
+
+pour-map = object-start, ws, [ pour-entry, { ws, ",", ws, pour-entry } ], ws, object-end;
+pour-entry = json-string, ws, ":", ws, pour;
+pour = object-start, ws,
+       string("uid"), ws, ":", ws, json-string,
+       ws, ",", ws, string("name"), ws, ":", ws, json-string,
+       ws, ",", ws, string("net_name"), ws, ":", ws, json-string,
+       ws, ",", ws, string("layer_hash"), ws, ":", ws, json-string,
+       ws, ",", ws, string("boundary"), ws, ":", ws, polygon,
+       [ ws, ",", ws, string("clearance"), ws, ":", ws, json-number ],
+       [ ws, ",", ws, string("cross_cutout"), ws, ":", ws, json-boolean ],
+       { ws, ",", ws, extension-field },
+       ws, object-end;
+
+keepout-list = array-start, ws, [ keepout, { ws, ",", ws, keepout } ], ws, array-end;
+keepout = object-start, ws,
+          string("uid"), ws, ":", ws, json-string,
+          ws, ",", ws, string("name"), ws, ":", ws, json-string,
+          ws, ",", ws, string("layer"), ws, ":", ws, json-string,
+          ws, ",", ws, string("shape"), ws, ":", ws, keepout-shape,
+          ws, ",", ws, string("keepout_type"), ws, ":", ws, json-string,
+          { ws, ",", ws, extension-field },
+          ws, object-end;
+
+keepout-shape = circle | polygon;
+
+polygon = object-start, ws,
+          string("type"), ws, ":", ws, string("polygon"),
+          ws, ",", ws, string("coordinates"), ws, ":", ws, coordinate-list,
+          { ws, ",", ws, extension-field },
+          ws, object-end;
+
+line-string = object-start, ws,
+              string("type"), ws, ":", ws, string("LineString"),
+              ws, ",", ws, string("coordinates"), ws, ":", ws, coordinate-list,
+              { ws, ",", ws, extension-field },
+              ws, object-end;
+
+rectangle = object-start, ws,
+            string("type"), ws, ":", ws, string("rectangle"),
+            ws, ",", ws, string("width"), ws, ":", ws, json-number,
+            ws, ",", ws, string("height"), ws, ":", ws, json-number,
+            ws, ",", ws, string("center"), ws, ":", ws, coordinate-pair,
+            { ws, ",", ws, extension-field },
+            ws, object-end;
+
+circle = object-start, ws,
+         string("type"), ws, ":", ws, string("circle"),
+         ws, ",", ws, string("center"), ws, ":", ws, coordinate-pair,
+         ws, ",", ws, string("radius"), ws, ":", ws, json-number,
+         { ws, ",", ws, extension-field },
+         ws, object-end;
+
+placement-region-list = array-start, ws, [ placement-region, { ws, ",", ws, placement-region } ], ws, array-end;
+placement-region = object-start, ws,
+                   string("name"), ws, ":", ws, json-string,
+                   ws, ",", ws, string("layer"), ws, ":", ws, json-string,
+                   ws, ",", ws, string("shape"), ws, ":", ws, polygon,
+                   ws, ",", ws, string("allowed_components"), ws, ":", ws, string-list,
+                   ws, ",", ws, string("region_type"), ws, ":", ws, json-string,
+                   { ws, ",", ws, extension-field },
+                   ws, object-end;
+
+net-tie-list = array-start, ws, [ net-tie, { ws, ",", ws, net-tie } ], ws, array-end;
+net-tie = object-start, ws,
+          string("comp_name"), ws, ":", ws, json-string,
+          ws, ",", ws, string("tie_pin"), ws, ":", ws, json-string,
+          ws, ",", ws, string("net_pins"), ws, ":", ws, string-list,
+          ws, ",", ws, string("layer"), ws, ":", ws, json-string,
+          { ws, ",", ws, extension-field },
+          ws, object-end;
+
+drill-data = object-start, ws,
+             [ string("drill_spans"), ws, ":", ws, drill-span-list, ws, ",", ws ],
+             [ string("tools"), ws, ":", ws, drill-tool-list ],
+             { ws, ",", ws, extension-field },
+             ws, object-end;
+
+drill-span-list = array-start, ws, [ drill-span, { ws, ",", ws, drill-span } ], ws, array-end;
+drill-span = object-start, ws,
+             string("name"), ws, ":", ws, json-string,
+             ws, ",", ws, string("start_layer"), ws, ":", ws, json-string,
+             ws, ",", ws, string("end_layer"), ws, ":", ws, json-string,
+             ws, ",", ws, string("plated"), ws, ":", ws, json-boolean,
+             { ws, ",", ws, extension-field },
+             ws, object-end;
+
+drill-tool-list = array-start, ws, [ drill-tool, { ws, ",", ws, drill-tool } ], ws, array-end;
+drill-tool = object-start, ws,
+             string("size"), ws, ":", ws, json-number,
+             ws, ",", ws, string("type"), ws, ":", ws, json-string,
+             ws, ",", ws, string("plated"), ws, ":", ws, json-boolean,
+             { ws, ",", ws, extension-field },
+             ws, object-end;
+
+schematics = object-start, ws,
+             string("name"), ws, ":", ws, json-string,
+             [ ws, ",", ws, string("sheets"), ws, ":", ws, schematic-sheet-list ],
+             [ ws, ",", ws, string("symbols"), ws, ":", ws, schematic-symbol-list ],
+             [ ws, ",", ws, string("wires"), ws, ":", ws, schematic-wire-list ],
+             { ws, ",", ws, extension-field },
+             ws, object-end;
+
+schematic-sheet-list = array-start, ws, [ schematic-sheet, { ws, ",", ws, schematic-sheet } ], ws, array-end;
+schematic-sheet = object-start, ws,
+                  string("uid"), ws, ":", ws, json-string,
+                  ws, ",", ws, string("name"), ws, ":", ws, json-string,
+                  ws, ",", ws, string("path"), ws, ":", ws, json-string,
+                  ws, ",", ws, string("page_number"), ws, ":", ws, json-number,
+                  { ws, ",", ws, extension-field },
+                  ws, object-end;
+
+schematic-symbol-list = array-start, ws, [ schematic-symbol, { ws, ",", ws, schematic-symbol } ], ws, array-end;
+schematic-symbol = object-start, ws,
+                   string("uid"), ws, ":", ws, json-string,
+                   ws, ",", ws, string("reference"), ws, ":", ws, json-string,
+                   ws, ",", ws, string("sheet"), ws, ":", ws, json-string,
+                   ws, ",", ws, string("position"), ws, ":", ws, coordinate-pair,
+                   ws, ",", ws, string("lib_name"), ws, ":", ws, json-string,
+                   { ws, ",", ws, extension-field },
+                   ws, object-end;
+
+schematic-wire-list = array-start, ws, [ schematic-wire, { ws, ",", ws, schematic-wire } ], ws, array-end;
+schematic-wire = object-start, ws,
+                 string("uid"), ws, ":", ws, json-string,
+                 ws, ",", ws, string("net_name"), ws, ":", ws, json-string,
+                 ws, ",", ws, string("sheet"), ws, ":", ws, json-string,
+                 ws, ",", ws, string("start"), ws, ":", ws, coordinate-pair,
+                 ws, ",", ws, string("end"), ws, ":", ws, coordinate-pair,
+                 { ws, ",", ws, extension-field },
+                 ws, object-end;
+
+net-settings = object-start, ws, [ net-settings-entry, { ws, ",", ws, net-settings-entry } ], ws, object-end;
+net-settings-entry = json-string, ws, ":", ws, string-list;
+
+string-list = array-start, ws, [ json-string, { ws, ",", ws, json-string } ], ws, array-end;
+string-map = object-start, ws, [ string-map-entry, { ws, ",", ws, string-map-entry } ], ws, object-end;
+string-map-entry = json-string, ws, ":", ws, json-string;
+
+coordinate-list = coordinate-pairs | coordinate-flat;
+coordinate-pairs = array-start, ws, coordinate-pair, { ws, ",", ws, coordinate-pair }, ws, array-end;
+coordinate-pair = array-start, ws, json-number, ws, ",", ws, json-number, ws, array-end;
+coordinate-flat = array-start, ws, json-number, ws, ",", ws, json-number, ws, ",", ws, json-number, ws, ",", ws, json-number,
+                 { ws, ",", ws, json-number }, ws, array-end;
+
+extension-field = json-string, ws, ":", ws, json-value;
+
+json-value = json-string | json-number | json-boolean | json-null | json-object | json-array;
+json-object = object-start, ws, [ json-member, { ws, ",", ws, json-member } ], ws, object-end;
+json-member = json-string, ws, ":", ws, json-value;
+json-array = array-start, ws, [ json-value, { ws, ",", ws, json-value } ], ws, array-end;
+json-string = string;
+json-number = number;
+json-boolean = "true" | "false";
+json-null = "null";
+
+string = '"', { character }, '"';
+number = ["-"], digit, { digit }, [".", digit, { digit }];
+character = ? any valid JSON character except unescaped quote ?;
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+object-start = "{";
+object-end = "}";
+array-start = "[";
+array-end = "]";
+ws = { " " | "\t" | "\n" | "\r" };

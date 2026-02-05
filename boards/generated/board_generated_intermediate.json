@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "1.0.0",
+  "metadata": {
+    "name": "Generated_Intermediate_Board",
+    "source": "SchemaExample",
+    "designUnits": "MICRON",
+    "creationDate": "2026-02-04T00:00:00Z"
+  },
+  "boundary": {
+    "type": "polygon",
+    "coordinates": [
+      [
+        0,
+        0
+      ],
+      [
+        60000,
+        0
+      ],
+      [
+        60000,
+        40000
+      ],
+      [
+        0,
+        40000
+      ],
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  "stackup": {
+    "layers": [
+      {
+        "name": "TOP",
+        "layer_type": "TOP",
+        "index": 0,
+        "material": {
+          "type": "COPPER",
+          "thickness": 35
+        }
+      },
+      {
+        "name": "DIELECTRIC",
+        "layer_type": "DIELECTRIC",
+        "index": 1,
+        "material": {
+          "type": "FR4",
+          "thickness": 800
+        }
+      },
+      {
+        "name": "BOTTOM",
+        "layer_type": "BOTTOM",
+        "index": 2,
+        "material": {
+          "type": "COPPER",
+          "thickness": 35
+        }
+      }
+    ],
+    "totalThickness": 870
+  },
+  "nets": [
+    {
+      "name": "GND",
+      "class": "POWER"
+    },
+    {
+      "name": "SIG1",
+      "class": "SIGNAL"
+    }
+  ],
+  "components": {
+    "U1": {
+      "name": "U1",
+      "reference": "U1",
+      "footprint": "SOIC8",
+      "outline": {
+        "type": "rectangle",
+        "width": 5000,
+        "height": 4000,
+        "center": [
+          0,
+          0
+        ]
+      },
+      "transform": {
+        "position": [
+          30000,
+          25000
+        ],
+        "rotation": 90,
+        "side": "FRONT"
+      },
+      "pins": {
+        "1": {
+          "name": "1",
+          "comp_name": "U1",
+          "net_name": "SIG1",
+          "shape": {
+            "type": "rectangle",
+            "width": 600,
+            "height": 450
+          },
+          "position": [
+            -2800,
+            1905
+          ],
+          "rotation": 0,
+          "is_throughhole": false
+        },
+        "2": {
+          "name": "2",
+          "comp_name": "U1",
+          "net_name": "GND",
+          "shape": {
+            "type": "rectangle",
+            "width": 600,
+            "height": 450
+          },
+          "position": [
+            -2800,
+            635
+          ],
+          "rotation": 0,
+          "is_throughhole": false
+        }
+      },
+      "user_preplaced": true
+    }
+  },
+  "traces": {
+    "trace_sig1": {
+      "uid": "trace_sig1",
+      "net_name": "SIG1",
+      "layer_hash": "TOP",
+      "path": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            26000,
+            25000
+          ],
+          [
+            15000,
+            25000
+          ],
+          [
+            15000,
+            15000
+          ]
+        ]
+      },
+      "width": 150
+    }
+  },
+  "vias": {
+    "via_gnd": {
+      "uid": "via_gnd",
+      "net_name": "GND",
+      "center": [
+        20000,
+        20000
+      ],
+      "diameter": 500,
+      "hole_size": 250,
+      "span": {
+        "start_layer": "TOP",
+        "end_layer": "BOTTOM"
+      }
+    }
+  },
+  "pours": {},
+  "keepouts": [
+    {
+      "uid": "keepout_region",
+      "name": "PLACEMENT_CUTOUT",
+      "layer": "TOP",
+      "shape": {
+        "type": "polygon",
+        "coordinates": [
+          [
+            10000,
+            10000
+          ],
+          [
+            20000,
+            10000
+          ],
+          [
+            20000,
+            20000
+          ],
+          [
+            10000,
+            20000
+          ],
+          [
+            10000,
+            10000
+          ]
+        ]
+      },
+      "keepout_type": "PLACEMENT"
+    }
+  ]
+}
